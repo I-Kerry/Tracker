@@ -140,12 +140,10 @@ final class HabitView: UIViewController {
               !trackerName.isEmpty else { return }
         let tracker = Tracker(id: UUID().uuidString,
                               name: trackerName,
-//                              color: UIColor(),
                               color: UIColor(red: 0.5, green: 0.5, blue: 1, alpha: 1),
                               emoji: "",
                               schedule: selectedDays/*.map { $0.rawValue }*/)
         delegate?.didCreateTracker(tracker, category: "Общее")
-//        dismiss(animated: true)
         view.window?.rootViewController?.dismiss(animated: true)
     }
     
@@ -190,7 +188,6 @@ extension HabitView: UITableViewDelegate {
         case 0:
             destinationVC = CategoryViewController()
         case 1:
-//            let scheduleVC = ScheduleViewController()
             let scheduleVC = ScheduleViewController()
             scheduleVC.delegate = self
             destinationVC = scheduleVC

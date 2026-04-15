@@ -164,13 +164,7 @@ final class TrackerViewController: UIViewController, TrackerViewCellDelegate {
         datepicker.widthAnchor.constraint(equalToConstant: 110).isActive = true
         datepicker.heightAnchor.constraint(equalToConstant: 34).isActive = true
     }
-//    @objc func datePickerValueChanged(_ sender: UIDatePicker)
     @objc func datePickerValueChanged() {
-//        let selectedDate = sender.date
-//        let dateFormatter = DateFormatter()
-//        dateFormatter.dateFormat = "dd.MM.yyyy"
-//        let formattedDate = dateFormatter.string(from: selectedDate)
-//        currentDate = selectedDate
         currentDate = datepicker.date
         reloadVisibleCategories()
         collectionView.reloadData()
@@ -188,21 +182,12 @@ final class TrackerViewController: UIViewController, TrackerViewCellDelegate {
                     weekday.numberValue == filterWeekend
                 } == true
                 
-//                return textCondition && dateCondition
                 return filterText.isEmpty ? (textCondition && dateCondition) : textCondition
             }
             
             return trackerFilter.isEmpty ? nil : TrackerCategory(
                 header: category.header,
                 trackerArray: trackerFilter)
-//            if trackerFilter.isEmpty {
-//                return nil
-//            }
-//            
-//            return TrackerCategory(
-//                header: category.header,
-//                trackerArray: trackerFilter
-//            )
         }
         collectionView.reloadData()
     }
@@ -215,7 +200,6 @@ final class TrackerViewController: UIViewController, TrackerViewCellDelegate {
     private func updatePlaceholder() {
         placeholder.isHidden = !visibleCategories.isEmpty
         collectionView.isHidden = visibleCategories.isEmpty
-//        collectionView.isHidden = categories.isEmpty
     }
     
     private func setupConstraints() {

@@ -113,15 +113,6 @@ final class TrackerViewCell: UICollectionViewCell {
     }
     
     @objc func tapButton() {
-//        if button.currentImage == UIImage(systemName: "plus") {
-//            button.setImage(UIImage(systemName: "checkmark"), for: .normal)
-//            button.alpha = 0.3
-//            button.tintColor = .white
-//        } else {
-//            button.setImage(UIImage(systemName: "plus"), for: .normal)
-//            button.alpha = 1
-//            button.tintColor = .white
-//        }
         delegate?.didTapButton(in: self)
     }
 }
