@@ -138,11 +138,11 @@ final class HabitView: UIViewController {
     @objc func tapCreateButton() {
         guard let trackerName = searchBar.text,
               !trackerName.isEmpty else { return }
-        let tracker = Tracker(id: UUID().uuidString,
+        let tracker = Tracker(id: UUID(),
                               name: trackerName,
                               color: UIColor(red: 0.5, green: 0.5, blue: 1, alpha: 1),
                               emoji: "",
-                              schedule: selectedDays/*.map { $0.rawValue }*/)
+                              schedule: selectedDays)
         delegate?.didCreateTracker(tracker, category: "Общее")
         view.window?.rootViewController?.dismiss(animated: true)
     }

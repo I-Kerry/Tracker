@@ -20,6 +20,8 @@ final class TabBarViewController: UITabBarController {
                                                image: UIImage(named: "statisticsIcon"),
                                                selectedImage: UIImage(named: "statisticsIcon")
         )
+        tabBar.layer.borderWidth = 0.5
+        tabBar.layer.borderColor = UIColor.gray.cgColor
         
         self.viewControllers = [trackerNav, statisticsNav]
     }

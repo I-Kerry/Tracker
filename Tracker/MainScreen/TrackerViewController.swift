@@ -71,21 +71,22 @@ final class TrackerViewController: UIViewController, TrackerViewCellDelegate {
         
         self.view.backgroundColor = .white
         
-        let testTracker = Tracker(id: UUID().uuidString,
+        let testTracker = Tracker(id: UUID(),
                                   name: "Test",
                                   color: UIColor(red: 0, green: 0.8, blue: 0, alpha: 1),
                                   emoji: "📱",
                                   schedule: [Weekday.friday])
-        let testTracker1 = Tracker(id: UUID().uuidString,
+        let testTracker1 = Tracker(id: UUID(),
                                    name: "Test1",
                                    color: UIColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 1),
                                    emoji: "🍆",
                                    schedule: [Weekday.sunday])
-        let testTracker2 = Tracker(id: UUID().uuidString,
+        let testTracker2 = Tracker(id: UUID(),
                                    name: "Test2",
                                    color: UIColor(red: 1, green: 0.5, blue: 0, alpha: 1),
                                    emoji: "💦",
                                    schedule: [Weekday.monday])
+        
         categories = [TrackerCategory(header: "Test", trackerArray: [testTracker, testTracker1])]
         categories.append(TrackerCategory(header: "Blablabla", trackerArray: [testTracker2]))
         
@@ -225,21 +226,26 @@ final class TrackerViewController: UIViewController, TrackerViewCellDelegate {
     func didTapButton(in cell: TrackerViewCell) {
         guard let tracker = cell.tracker else { return }
         
+        if currentDate > Date() {
+            return
+        }
+        
         if let index = completedTrackers.firstIndex(where: {
             $0.trackerId == tracker.id && Calendar.current.isDate($0.date, inSameDayAs: currentDate)
         }) {
             completedTrackers.remove(at: index)
         } else {
+            
             completedTrackers.append(TrackerRecord(id: UUID(),
-                                                           trackerId: tracker.id,
-                                                           date: currentDate)
-                                     )
+                                                   trackerId: tracker.id,
+                                                   date: currentDate)
+            )
         }
         if let indexPath = collectionView.indexPath(for: cell) {
             collectionView.reloadItems(at: [indexPath])
         }
         updatePlaceholder()
-        collectionView.reloadData()
+        //        collectionView.reloadData()
     }
     
     private func setupUIGesture() {
@@ -293,6 +299,7 @@ extension TrackerViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "header", for: indexPath) as! SupplementaryView
         view.titleLabel.text = visibleCategories[indexPath.section].header
+        view.titleLabel.textAlignment = .left
         return view
     }
 }

@@ -136,7 +136,7 @@ final class IrregularViewController: UIViewController {
     @objc func tapCreateButton() {
         guard let trackerName = searchBar.text,
               !trackerName.isEmpty else { return }
-        let tracker = Tracker(id: UUID().uuidString,
+        let tracker = Tracker(id: UUID(),
                               name: trackerName,
                               color: UIColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 1),
                               emoji: "💩",
