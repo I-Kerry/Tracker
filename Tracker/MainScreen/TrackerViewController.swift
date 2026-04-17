@@ -245,7 +245,6 @@ final class TrackerViewController: UIViewController, TrackerViewCellDelegate {
             collectionView.reloadItems(at: [indexPath])
         }
         updatePlaceholder()
-        //        collectionView.reloadData()
     }
     
     private func setupUIGesture() {
@@ -289,6 +288,7 @@ extension TrackerViewController: UICollectionViewDataSource {
         let completedTrackers = completedTrackers.filter { $0.trackerId == tracker.id}.count
         
         cell?.dayLabel.text = "\(completedTrackers) день"
+        cell?.dayLabel.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         return cell!
     }
     
@@ -335,7 +335,6 @@ extension TrackerViewController: HabitViewDelegate {
         }
         reloadVisibleCategories()
         updatePlaceholder()
-//        dismiss(animated: true)
         presentingViewController?.dismiss(animated: true)
         collectionView.reloadData()
     }

@@ -34,13 +34,11 @@ final class TrackerViewCell: UICollectionViewCell {
     
     var dayLabel: UILabel = {
         let dayLabel = UILabel()
-//        dayLabel.text = "\(0) дней"
         return dayLabel
     }()
     
     var button: UIButton! = {
         let button = UIButton()
-//        button.setImage(UIImage(named: "plus"), for: .normal)
         button.setImage(UIImage(systemName: "plus"), for: .normal)
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 17
