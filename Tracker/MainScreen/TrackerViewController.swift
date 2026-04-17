@@ -158,7 +158,6 @@ final class TrackerViewController: UIViewController, TrackerViewCellDelegate {
         datepicker.datePickerMode = .date
         datepicker.locale = Locale(identifier: "ru_RU")
         let datePickerItem = UIBarButtonItem(customView: datepicker)
-//        datepicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
         datepicker.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
         navigationItem.rightBarButtonItem = datePickerItem
         datepicker.translatesAutoresizingMaskIntoConstraints = false
@@ -207,7 +206,6 @@ final class TrackerViewController: UIViewController, TrackerViewCellDelegate {
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: searchField.bottomAnchor, constant: 24),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-//            collectionView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             
@@ -287,7 +285,8 @@ extension TrackerViewController: UICollectionViewDataSource {
         
         let completedTrackers = completedTrackers.filter { $0.trackerId == tracker.id}.count
         
-        cell?.dayLabel.text = "\(completedTrackers) день"
+//        cell?.dayLabel.text = "\(completedTrackers) день"
+        cell?.dayLabel.text = String(localized: .daysCount(completedTrackers))
         cell?.dayLabel.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         return cell!
     }
