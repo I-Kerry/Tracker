@@ -34,13 +34,11 @@ final class TrackerViewCell: UICollectionViewCell {
     
     var dayLabel: UILabel = {
         let dayLabel = UILabel()
-//        dayLabel.text = "\(0) дней"
         return dayLabel
     }()
     
     var button: UIButton! = {
         let button = UIButton()
-//        button.setImage(UIImage(named: "plus"), for: .normal)
         button.setImage(UIImage(systemName: "plus"), for: .normal)
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 17
@@ -79,7 +77,7 @@ final class TrackerViewCell: UICollectionViewCell {
             label.leadingAnchor.constraint(equalTo: cellColored.leadingAnchor, constant: 12),
             label.bottomAnchor.constraint(equalTo: cellColored.bottomAnchor, constant: -12),
 
-            dayLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            dayLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
             dayLabel.topAnchor.constraint(equalTo: cellColored.bottomAnchor, constant: 16),
             
             button.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
@@ -99,8 +97,9 @@ final class TrackerViewCell: UICollectionViewCell {
         self.tracker = tracker
         emoji.text = tracker.emoji
         label.text = tracker.name
-        cellColored.backgroundColor = tracker.color
+        cellColored.backgroundColor = tracker.color.withAlphaComponent(0.3)
         button.backgroundColor = tracker.color
+//        cellColored.alpha = 0.3
         
         if isCompleted {
             button.setImage(UIImage(systemName: "checkmark"), for: .normal)
@@ -113,15 +112,6 @@ final class TrackerViewCell: UICollectionViewCell {
     }
     
     @objc func tapButton() {
-//        if button.currentImage == UIImage(systemName: "plus") {
-//            button.setImage(UIImage(systemName: "checkmark"), for: .normal)
-//            button.alpha = 0.3
-//            button.tintColor = .white
-//        } else {
-//            button.setImage(UIImage(systemName: "plus"), for: .normal)
-//            button.alpha = 1
-//            button.tintColor = .white
-//        }
         delegate?.didTapButton(in: self)
     }
 }
