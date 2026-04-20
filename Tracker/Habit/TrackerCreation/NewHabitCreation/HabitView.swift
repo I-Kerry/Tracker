@@ -8,8 +8,20 @@ protocol HabitViewDelegate: AnyObject {
 final class HabitView: UIViewController {
     
     weak var delegate: HabitViewDelegate?
+        
+    private let emojiCollection = EmojiCollectionView()
+    
+    private let colorCollection = ColorCollectionView()
+    
+    private let scrollView = UIScrollView()
+    
+    private let contentView = UIView()
     
     private var selectedDays: [Weekday] = []
+    
+    private var selectedEmoji: String?
+    
+    private var selectedColor: UIColor?
     
     private var items: [String] = [
         "Категория",
@@ -95,39 +107,78 @@ final class HabitView: UIViewController {
         
         tableView.delegate = self
         tableView.dataSource = self
+        
+        emojiCollection.delegate = self
+        colorCollection.delegate = self
+        
         setupConstraints()
         setupUIGesture()
     }
     
     private func setupUI() {
-        view.addSubview(titleLabel)
-        view.addSubview(searchBar)
-        view.addSubview(tableView)
-        view.addSubview(stack)
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        
+        contentView.addSubview(titleLabel)
+        contentView.addSubview(searchBar)
+        contentView.addSubview(tableView)
+        contentView.addSubview(stack)
+        
         stack.addArrangedSubview(cancelButton)
         stack.addArrangedSubview(createButton)
+        
+        emojiCollection.translatesAutoresizingMaskIntoConstraints = false
+        colorCollection.translatesAutoresizingMaskIntoConstraints = false
+        
+        contentView.addSubview(emojiCollection)
+        contentView.addSubview(colorCollection)
     }
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 27),
-            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            
+            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 0),
+            titleLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             
             searchBar.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 38),
-            searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            searchBar.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            searchBar.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            searchBar.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            searchBar.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             
             tableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 24),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            tableView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            tableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            tableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            tableView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             tableView.heightAnchor.constraint(equalToConstant: 150),
             
-            stack.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            stack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            stack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            stack.heightAnchor.constraint(equalToConstant: 60)
+//            stack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            stack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
+            stack.topAnchor.constraint(equalTo: colorCollection.bottomAnchor, constant: 16),
+            stack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            stack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            stack.heightAnchor.constraint(equalToConstant: 60),
+            
+            emojiCollection.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 32),
+            emojiCollection.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            emojiCollection.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            emojiCollection.heightAnchor.constraint(equalToConstant: 204),
+            
+            colorCollection.topAnchor.constraint(equalTo: emojiCollection.bottomAnchor, constant: 16),
+            colorCollection.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            colorCollection.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            colorCollection.heightAnchor.constraint(equalToConstant: 204),
         ])
     }
     
@@ -140,8 +191,9 @@ final class HabitView: UIViewController {
               !trackerName.isEmpty else { return }
         let tracker = Tracker(id: UUID(),
                               name: trackerName,
-                              color: UIColor(red: 0.5, green: 0.5, blue: 1, alpha: 1),
-                              emoji: "",
+//                              color: UIColor(red: 0.5, green: 0.5, blue: 1, alpha: 1),
+                              color: selectedColor ?? UIColor(red: 0.5, green: 0.5, blue: 1, alpha: 1),
+                              emoji: selectedEmoji ?? "",
                               schedule: selectedDays)
         delegate?.didCreateTracker(tracker, category: "Общее")
         view.window?.rootViewController?.dismiss(animated: true)
@@ -201,6 +253,17 @@ extension HabitView: UITableViewDelegate {
 extension HabitView: ScheduleViewControllerDelegate {
     func didSelectDays(_ weekday: [Weekday]) {
         self.selectedDays = weekday
-        print("выбранные дни: \(weekday.map { $0.rawValue })")
+    }
+}
+
+extension HabitView: EmojiCollectionViewDelegate {
+    func didSelectEmoji(_ emoji: String) {
+        self.selectedEmoji = emoji
+    }
+}
+
+extension HabitView: ColorCollectionViewDelegate {
+    func didSelectColor(_ color: UIColor) {
+        self.selectedColor = color
     }
 }

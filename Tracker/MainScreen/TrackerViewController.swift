@@ -285,9 +285,9 @@ extension TrackerViewController: UICollectionViewDataSource {
         
         let completedTrackers = completedTrackers.filter { $0.trackerId == tracker.id}.count
         
-//        cell?.dayLabel.text = "\(completedTrackers) день"
         cell?.dayLabel.text = String(localized: .daysCount(completedTrackers))
         cell?.dayLabel.font = UIFont.systemFont(ofSize: 12, weight: .medium)
+        
         return cell!
     }
     
