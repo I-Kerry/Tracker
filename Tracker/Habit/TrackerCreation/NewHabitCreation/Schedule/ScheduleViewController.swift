@@ -21,6 +21,18 @@ enum Weekday: String, CaseIterable {
         case .sunday: return 1
         }
     }
+    
+    var shortNames: String {
+        switch self {
+        case .monday: return "Пн"
+        case .tuesday: return "Вт"
+        case .wednesday: return "Ср"
+        case .thursday: return "Чт"
+        case .friday: return "Пт"
+        case .saturday: return "Сб"
+        case .sunday: return "Вс"
+        }
+    }
 }
 
 protocol ScheduleViewControllerDelegate: AnyObject {
@@ -66,7 +78,7 @@ final class ScheduleViewController: UIViewController {
     init() {
         super.init(nibName: nil, bundle: nil)
         
-        button.addTarget(self, action: #selector(didTapDOne), for: .touchUpInside)
+        button.addTarget(self, action: #selector(didTapDone), for: .touchUpInside)
     }
     
     required init?(coder: NSCoder) {
@@ -111,7 +123,7 @@ final class ScheduleViewController: UIViewController {
         ])
     }
     
-    @objc private func didTapDOne() {
+    @objc private func didTapDone() {
         delegate?.didSelectDays(selectedDays)
         navigationController?.popViewController(animated: true)
 //        dismiss(animated: true)

@@ -28,14 +28,14 @@ final class HabitView: UIViewController {
         "Расписание"
     ]
     
-    private var titleLabel: UILabel = {
-        let titleLabel = UILabel()
-        titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        titleLabel.textColor = .blackDay
-        titleLabel.text = "Новая привычка"
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        return titleLabel
-    }()
+//    private var titleLabel: UILabel = {
+//        let titleLabel = UILabel()
+//        titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+//        titleLabel.textColor = .blackDay
+//        titleLabel.text = "Новая привычка"
+//        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+//        return titleLabel
+//    }()
     
     private var searchBar: UITextField = {
         let searchBar = UITextField()
@@ -113,6 +113,7 @@ final class HabitView: UIViewController {
         
         setupConstraints()
         setupUIGesture()
+        setupTitle()
     }
     
     private func setupUI() {
@@ -121,7 +122,7 @@ final class HabitView: UIViewController {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         
-        contentView.addSubview(titleLabel)
+//        contentView.addSubview(titleLabel)
         contentView.addSubview(searchBar)
         contentView.addSubview(tableView)
         contentView.addSubview(stack)
@@ -134,6 +135,14 @@ final class HabitView: UIViewController {
         
         contentView.addSubview(emojiCollection)
         contentView.addSubview(colorCollection)
+    }
+    
+    private func setupTitle() {
+        navigationItem.title = "Новая привычка"
+        navigationController?.navigationBar.titleTextAttributes = [
+            .font: UIFont.systemFont(ofSize: 16, weight: .medium),
+            .foregroundColor: UIColor.blackDay
+        ]
     }
     
     func setupConstraints() {
@@ -149,10 +158,10 @@ final class HabitView: UIViewController {
             contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
             
-            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 0),
-            titleLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+//            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 0),
+//            titleLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             
-            searchBar.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 38),
+            searchBar.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: 24),
             searchBar.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             searchBar.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             searchBar.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
@@ -213,6 +222,21 @@ final class HabitView: UIViewController {
     @objc func dismissKeyboard() {
         view.endEditing(true)
     }
+    
+    private func formatScheduleText(_ days: [Weekday]) -> String {
+        if days.isEmpty {
+            return ""
+        }
+        
+        if days.count == 7 {
+            return "Каждый день"
+        }
+        
+        let sortedDays = days.sorted { $0.numberValue < $1.numberValue }
+        let shortNames = sortedDays.map { $0.shortNames }
+        
+        return shortNames.joined(separator: ", ")
+    }
 }
 
 extension HabitView: UITableViewDataSource {
@@ -221,11 +245,20 @@ extension HabitView: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: HabitViewCell.reuseIdentifier, for: indexPath) as! HabitViewCell
+//        let cell = tableView.dequeueReusableCell(withIdentifier: HabitViewCell.reuseIdentifier, for: indexPath) as! HabitViewCell
+        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
         cell.textLabel?.text = items[indexPath.row]
         cell.textLabel?.font = UIFont.systemFont(ofSize: 17, weight: .medium)
         cell.textLabel?.textColor = .blackDay
         cell.backgroundColor = .backgroundDay
+        cell.accessoryType = .disclosureIndicator
+        if indexPath.row == 1 {
+            cell.detailTextLabel?.text = formatScheduleText(selectedDays)
+            
+            cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+            cell.detailTextLabel?.textColor = .ypGray
+        }
+        
         return cell
     }
 }
@@ -238,7 +271,8 @@ extension HabitView: UITableViewDelegate {
         
         switch indexPath.row {
         case 0:
-            destinationVC = CategoryViewController()
+//            destinationVC = CategoryViewController()
+            return
         case 1:
             let scheduleVC = ScheduleViewController()
             scheduleVC.delegate = self
@@ -253,6 +287,7 @@ extension HabitView: UITableViewDelegate {
 extension HabitView: ScheduleViewControllerDelegate {
     func didSelectDays(_ weekday: [Weekday]) {
         self.selectedDays = weekday
+        tableView.reloadData()
     }
 }
 

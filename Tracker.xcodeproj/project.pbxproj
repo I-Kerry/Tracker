@@ -7,11 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		355B75752F9902B3002193F1 /* TrackerData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 355B75732F9902B3002193F1 /* TrackerData.xcdatamodeld */; };
 		35C420672F927B3E00891E2C /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 35C420662F927B3E00891E2C /* Localizable.xcstrings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		3555EEDC2F797796001C7AA7 /* Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		355B75742F9902B3002193F1 /* TrackerData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TrackerData.xcdatamodel; sourceTree = "<group>"; };
 		35C420662F927B3E00891E2C /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -34,6 +36,11 @@
 			path = Tracker;
 			sourceTree = "<group>";
 		};
+		35582DCC2F9A4E8C001A79AB /* Delegates */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Delegates;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,6 +57,8 @@
 		3555EED32F797796001C7AA7 = {
 			isa = PBXGroup;
 			children = (
+				35582DCC2F9A4E8C001A79AB /* Delegates */,
+				355B75732F9902B3002193F1 /* TrackerData.xcdatamodeld */,
 				35C420662F927B3E00891E2C /* Localizable.xcstrings */,
 				3555EEDE2F797796001C7AA7 /* Tracker */,
 				3555EEDD2F797796001C7AA7 /* Products */,
@@ -81,6 +90,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				3555EEDE2F797796001C7AA7 /* Tracker */,
+				35582DCC2F9A4E8C001A79AB /* Delegates */,
 			);
 			name = Tracker;
 			packageProductDependencies = (
@@ -140,6 +150,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				355B75752F9902B3002193F1 /* TrackerData.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -355,6 +366,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		355B75732F9902B3002193F1 /* TrackerData.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				355B75742F9902B3002193F1 /* TrackerData.xcdatamodel */,
+			);
+			currentVersion = 355B75742F9902B3002193F1 /* TrackerData.xcdatamodel */;
+			path = TrackerData.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 3555EED42F797796001C7AA7 /* Project object */;
 }

@@ -7,14 +7,14 @@ final class CreateTrackerViewController: UIViewController {
     
     weak var delegateIrregular: IrregularViewControllerDelegate?
     
-    private var titleLabel: UILabel = {
-        let titleLabel = UILabel()
-        titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        titleLabel.textColor = .blackDay
-        titleLabel.text = "Создание трекера"
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        return titleLabel
-    }()
+//    private var titleLabel: UILabel = {
+//        let titleLabel = UILabel()
+//        titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+//        titleLabel.textColor = .blackDay
+//        titleLabel.text = "Создание трекера"
+//        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+//        return titleLabel
+//    }()
     
     private let habitButton: UIButton = {
         let button = UIButton()
@@ -54,18 +54,19 @@ final class CreateTrackerViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         setupConstraints()
+        setupTitle()
     }
     
     private func setupUI() {
-        view.addSubview(titleLabel)
+//        view.addSubview(titleLabel)
         view.addSubview(habitButton)
         view.addSubview(irregularButton)
     }
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 27),
-            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+//            titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 27),
+//            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
             habitButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             habitButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -92,5 +93,13 @@ final class CreateTrackerViewController: UIViewController {
         let navIrregularVC = UINavigationController(rootViewController: irregularVC)
         irregularVC.delegate = delegateIrregular
         present(navIrregularVC, animated: true)
+    }
+    
+    private func setupTitle() {
+        navigationItem.title = "Создание трекера"
+        navigationController?.navigationBar.titleTextAttributes = [
+            .font: UIFont.systemFont(ofSize: 16, weight: .medium),
+            .foregroundColor: UIColor.blackDay
+        ]
     }
 }
