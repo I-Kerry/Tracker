@@ -61,6 +61,7 @@ final class CreateTrackerViewController: UIViewController {
 //        view.addSubview(titleLabel)
         view.addSubview(habitButton)
         view.addSubview(irregularButton)
+        view.backgroundColor = .white
     }
     
     private func setupConstraints() {

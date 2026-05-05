@@ -48,7 +48,7 @@ final class TrackerCategoryStore: NSObject {
         
 //        trackerCategoryCD.trackers =
         
-        try! context.save()
+        try? context.save()
     }
     
     func fetchCategories() -> [TrackerCategory] {
@@ -73,6 +73,7 @@ final class TrackerCategoryStore: NSObject {
             }
             let category = TrackerCategory(header: trackerCategoryCD.header ?? "", trackerArray: trackers)
             results.append(category)
+            
         }
         return results
     }

@@ -24,6 +24,8 @@ final class ColorCollectionView: UIView {
         
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         self.addSubview(collectionView)
+        collectionView.backgroundColor = .white
+        self.backgroundColor = .white
         
         collectionView.dataSource = self
         collectionView.delegate = self
@@ -50,15 +52,16 @@ extension ColorCollectionView: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ColorCollectionCell.reuseIdentifier, for: indexPath) as! ColorCollectionCell
-        cell.configure(with: colorArray[indexPath.item])
-        return cell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ColorCollectionCell.reuseIdentifier, for: indexPath) as? ColorCollectionCell
+        cell?.configure(with: colorArray[indexPath.item])
+        return cell ?? UICollectionViewCell()
     }
 }
 
 extension ColorCollectionView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: (collectionView.bounds.width - 5 * 5) / 6, height: 52)
+//        return CGSize(width: (collectionView.bounds.width - 5 * 5) / 6, height: 52)
+        return CGSize(width: (UIScreen.main.bounds.width - 32 - 5 * 5) / 6, height: 52)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
@@ -76,17 +79,25 @@ extension ColorCollectionView: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let cell = collectionView.cellForItem(at: indexPath) as! ColorCollectionCell
-        cell.layer.borderColor = colorArray[indexPath.item].withAlphaComponent(0.3).cgColor
-        cell.layer.borderWidth = 3
-        cell.contentView.layer.masksToBounds = true
-        cell.contentView.layer.cornerRadius = 8
+        let cell = collectionView.cellForItem(at: indexPath) as? ColorCollectionCell
+        cell?.layer.borderColor = colorArray[indexPath.item].withAlphaComponent(0.3).cgColor
+        cell?.layer.borderWidth = 3
+        cell?.contentView.layer.masksToBounds = true
+        cell?.contentView.layer.cornerRadius = 8
         collectionView.allowsMultipleSelection = false
         delegate?.didSelectColor(colorArray[indexPath.item])
     }
     
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        let cell = collectionView.cellForItem(at: indexPath) as! ColorCollectionCell
-        cell.layer.borderWidth = 0
+        let cell = collectionView.cellForItem(at: indexPath) as? ColorCollectionCell
+        cell?.layer.borderWidth = 0
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 0
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 24, left: 0, bottom: 0, right: 0)
     }
 }

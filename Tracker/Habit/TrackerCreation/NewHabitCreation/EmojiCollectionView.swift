@@ -16,7 +16,6 @@ final class EmojiCollectionView: UIView {
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         let collectionView = UICollectionView(frame:.zero , collectionViewLayout: layout)
-//        layout.minimumInteritemSpacing = 5
         return collectionView
     }()
     
@@ -25,6 +24,8 @@ final class EmojiCollectionView: UIView {
         
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         self.addSubview(collectionView)
+        collectionView.backgroundColor = .white
+        self.backgroundColor = .white
         
         collectionView.dataSource = self
         collectionView.delegate = self
@@ -51,15 +52,16 @@ extension EmojiCollectionView: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmojiCollectionCell.reuseIdentifier, for: indexPath) as! EmojiCollectionCell
-        cell.emoji.text = emojiArray[indexPath.item]
-        return cell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmojiCollectionCell.reuseIdentifier, for: indexPath) as? EmojiCollectionCell
+        cell?.emoji.text = emojiArray[indexPath.item]
+        return cell ?? UICollectionViewCell()
     }
 }
 
 extension EmojiCollectionView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: (collectionView.bounds.width - 5 * 5) / 6, height: 52)
+//        return CGSize(width: (collectionView.bounds.width - 5 * 5) / 6, height: 52)
+        return CGSize(width: (UIScreen.main.bounds.width - 32 - 5 * 5) / 6, height: 52)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
@@ -77,16 +79,24 @@ extension EmojiCollectionView: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let cell = collectionView.cellForItem(at: indexPath) as! EmojiCollectionCell
-        cell.contentView.backgroundColor = .lightGrayForEmoji
-        cell.contentView.layer.masksToBounds = true
-        cell.contentView.layer.cornerRadius = 16
+        let cell = collectionView.cellForItem(at: indexPath) as? EmojiCollectionCell
+        cell?.contentView.backgroundColor = .lightGrayForEmoji
+        cell?.contentView.layer.masksToBounds = true
+        cell?.contentView.layer.cornerRadius = 16
         collectionView.allowsMultipleSelection = false
         delegate?.didSelectEmoji(emojiArray[indexPath.item])
     }
     
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        let cell = collectionView.cellForItem(at: indexPath) as! EmojiCollectionCell
-        cell.contentView.backgroundColor = .clear
+        let cell = collectionView.cellForItem(at: indexPath) as? EmojiCollectionCell
+        cell?.contentView.backgroundColor = .clear
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 0
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 24, left: 0, bottom: 0, right: 0)
     }
 }

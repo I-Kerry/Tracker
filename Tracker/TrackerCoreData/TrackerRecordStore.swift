@@ -55,6 +55,15 @@ final class TrackerRecordStore: NSObject {
         
         try context.save()
     }
+    
+    func removeTrackerRecord(trackerID id: UUID, trackerDate date: Date) throws {
+        let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
+        request.predicate = NSPredicate(format: "trackerId == %@ AND date == %@" , id.uuidString as CVarArg, date as CVarArg)
+        if let record = try? context.fetch(request).first {
+            context.delete(record)
+            try context.save()
+        }
+    }
 }
 
 extension TrackerRecordStore: NSFetchedResultsControllerDelegate {

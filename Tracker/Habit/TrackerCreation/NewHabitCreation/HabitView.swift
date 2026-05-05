@@ -7,42 +7,43 @@ protocol HabitViewDelegate: AnyObject {
 
 final class HabitView: UIViewController {
     
+    // MARK: - Properties
     weak var delegate: HabitViewDelegate?
-        
     private let emojiCollection = EmojiCollectionView()
-    
     private let colorCollection = ColorCollectionView()
-    
-    private let scrollView = UIScrollView()
-    
-    private let contentView = UIView()
-    
     private var selectedDays: [Weekday] = []
-    
     private var selectedEmoji: String?
-    
-    private var selectedColor: UIColor?
-    
+    private var tableViewTopConstraint: NSLayoutConstraint?
     private var items: [String] = [
         "Категория",
         "Расписание"
     ]
     
-//    private var titleLabel: UILabel = {
-//        let titleLabel = UILabel()
-//        titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-//        titleLabel.textColor = .blackDay
-//        titleLabel.text = "Новая привычка"
-//        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-//        return titleLabel
-//    }()
+    // MARK: - UI
     
+    private let scrollView = UIScrollView()
+    private var selectedColor: UIColor?
+    private let contentView = UIView()
+
     private var searchBar: UITextField = {
         let searchBar = UITextField()
         searchBar.borderStyle = .roundedRect
         searchBar.placeholder = "Введите название трекера"
         searchBar.translatesAutoresizingMaskIntoConstraints = false
+        searchBar.clearButtonMode = .whileEditing
+        searchBar.backgroundColor = .backgroundDay
         return searchBar
+    }()
+    
+    private let limitLabel: UILabel = {
+        let limitLabel = UILabel()
+        limitLabel.text = "Ограничение 38 символов"
+        limitLabel.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        limitLabel.textColor = .red
+        limitLabel.isHidden = true
+        limitLabel.textAlignment = .center
+        limitLabel.translatesAutoresizingMaskIntoConstraints = false
+        return limitLabel
     }()
     
     private let tableView: UITableView = {
@@ -50,6 +51,8 @@ final class HabitView: UIViewController {
         tableView.register(HabitViewCell.self, forCellReuseIdentifier: HabitViewCell.reuseIdentifier)
         tableView.layer.masksToBounds = true
         tableView.layer.cornerRadius = 10
+        tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
+        tableView.rowHeight = 75
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
@@ -87,13 +90,12 @@ final class HabitView: UIViewController {
         return stack
     }()
     
+    // MARK: - Init
+
     init() {
         super.init(nibName: nil, bundle: nil)
-        
         cancelButton.addTarget(self, action: #selector(tapCancelButton), for: .touchUpInside)
-        
         createButton.addTarget(self, action: #selector(tapCreateButton), for: .touchUpInside)
-        
         searchBar.addTarget(self, action: #selector(textChanged), for: .editingChanged)
     }
     
@@ -101,12 +103,15 @@ final class HabitView: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Lifecycle
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         
         tableView.delegate = self
         tableView.dataSource = self
+        searchBar.delegate = self
         
         emojiCollection.delegate = self
         colorCollection.delegate = self
@@ -116,14 +121,16 @@ final class HabitView: UIViewController {
         setupTitle()
     }
     
+    // MARK: - Setup
+    
     private func setupUI() {
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         contentView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         
-//        contentView.addSubview(titleLabel)
         contentView.addSubview(searchBar)
+        contentView.addSubview(limitLabel)
         contentView.addSubview(tableView)
         contentView.addSubview(stack)
         
@@ -135,6 +142,11 @@ final class HabitView: UIViewController {
         
         contentView.addSubview(emojiCollection)
         contentView.addSubview(colorCollection)
+        
+        view.backgroundColor = .white
+        scrollView.backgroundColor = .white
+        contentView.backgroundColor = .white
+        tableView.backgroundColor = .white
     }
     
     private func setupTitle() {
@@ -146,6 +158,9 @@ final class HabitView: UIViewController {
     }
     
     func setupConstraints() {
+        tableViewTopConstraint = tableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 24)
+        tableViewTopConstraint?.isActive = true
+        
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -157,22 +172,22 @@ final class HabitView: UIViewController {
             contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-            
-//            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 0),
-//            titleLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            
+                        
             searchBar.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: 24),
             searchBar.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             searchBar.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             searchBar.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            searchBar.heightAnchor.constraint(equalToConstant: 75),
             
-            tableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 24),
+            limitLabel.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 8),
+            limitLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 28),
+            limitLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -28),
+            
             tableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             tableView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             tableView.heightAnchor.constraint(equalToConstant: 150),
             
-//            stack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             stack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
             stack.topAnchor.constraint(equalTo: colorCollection.bottomAnchor, constant: 16),
             stack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
@@ -191,6 +206,8 @@ final class HabitView: UIViewController {
         ])
     }
     
+    // MARK: - Actions
+
     @objc func tapCancelButton() {
         dismiss(animated: true)
     }
@@ -213,14 +230,16 @@ final class HabitView: UIViewController {
         createButton.backgroundColor = createButton.isEnabled ? .blackDay : .ypGray
     }
     
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
+    }
+    
+    // MARK: - Private Methods
+    
     private func setupUIGesture() {
         let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
-    }
-    
-    @objc func dismissKeyboard() {
-        view.endEditing(true)
     }
     
     private func formatScheduleText(_ days: [Weekday]) -> String {
@@ -239,18 +258,20 @@ final class HabitView: UIViewController {
     }
 }
 
+// MARK: - UITableViewDataSource
+
 extension HabitView: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return items.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        let cell = tableView.dequeueReusableCell(withIdentifier: HabitViewCell.reuseIdentifier, for: indexPath) as! HabitViewCell
         let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
         cell.textLabel?.text = items[indexPath.row]
         cell.textLabel?.font = UIFont.systemFont(ofSize: 17, weight: .medium)
         cell.textLabel?.textColor = .blackDay
         cell.backgroundColor = .backgroundDay
+        cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
         cell.accessoryType = .disclosureIndicator
         if indexPath.row == 1 {
             cell.detailTextLabel?.text = formatScheduleText(selectedDays)
@@ -263,6 +284,27 @@ extension HabitView: UITableViewDataSource {
     }
 }
 
+// MARK: - UITableViewDelegate
+
+extension HabitView: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let currentText = textField.text ?? ""
+        guard let stringRange = Range(range, in: currentText) else { return false }
+        
+        let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
+        
+        let isOverLimit = updatedText.count > 38
+        
+        limitLabel.isHidden = !isOverLimit
+        
+        tableViewTopConstraint?.constant = isOverLimit ? 62 : 24
+        
+        return updatedText.count <= 38
+    }
+}
+
+// MARK: - Delegates
+
 extension HabitView: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
@@ -271,7 +313,7 @@ extension HabitView: UITableViewDelegate {
         
         switch indexPath.row {
         case 0:
-//            destinationVC = CategoryViewController()
+            destinationVC = CategoryViewController()
             return
         case 1:
             let scheduleVC = ScheduleViewController()

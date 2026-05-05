@@ -6,7 +6,7 @@ import CoreData
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
-    
+        
     lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "TrackerData")
         container.loadPersistentStores(completionHandler: { (storeDiscription, error) in
@@ -24,7 +24,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        window?.rootViewController = ViewController()
 //        window?.rootViewController = TabBarViewController()
 //        window?.makeKeyAndVisible()
-        
+        ValueTransformer.setValueTransformer(
+                NSSecureUnarchiveFromDataTransformer(),
+                forName: NSValueTransformerName("NSSecureUnarchiveFromDataTransformerName")
+            )
         
         return true
     }

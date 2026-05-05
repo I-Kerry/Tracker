@@ -113,6 +113,7 @@ final class TrackerViewController: UIViewController, TrackerViewCellDelegate {
                                      style: .plain,
                                      target: self,
                                      action: #selector(tapAddTrackerButton))
+        button.tintColor = .blackDay
         navigationItem.leftBarButtonItem = button
     }
     
@@ -137,10 +138,11 @@ final class TrackerViewController: UIViewController, TrackerViewCellDelegate {
     private func setupSearchBar() {
         searchField = UISearchBar()
         searchField.placeholder = "Поиск"
-        searchField.showsCancelButton = true
+        searchField.showsCancelButton = false
         searchField.searchBarStyle = .minimal
         searchField.translatesAutoresizingMaskIntoConstraints = false
         searchField.delegate = self
+        searchField.searchTextField.backgroundColor = UIColor(red: 118/255.0, green: 118/255.0, blue: 128/255.0, alpha: 0.12)
         view.addSubview(searchField)
     }
     
@@ -214,6 +216,7 @@ final class TrackerViewController: UIViewController, TrackerViewCellDelegate {
     
     func didTapButton(in cell: TrackerViewCell) {
         guard let tracker = cell.tracker else { return }
+        let record = TrackerRecord(id: UUID(), trackerId: tracker.id, date: currentDate)
         
         if currentDate > Date() {
             return
@@ -223,8 +226,9 @@ final class TrackerViewController: UIViewController, TrackerViewCellDelegate {
             $0.trackerId == tracker.id && Calendar.current.isDate($0.date, inSameDayAs: currentDate)
         }) {
             completedTrackers.remove(at: index)
+            try? trackerRecordStore.removeTrackerRecord(trackerID: record.trackerId, trackerDate: record.date)
         } else {
-            let record = TrackerRecord(id: UUID(), trackerId: tracker.id, date: currentDate)
+//            let record = TrackerRecord(id: UUID(), trackerId: tracker.id, date: currentDate)
             completedTrackers.append(record)
             try? trackerRecordStore.addNewTrackerRecord(record)
         }
@@ -277,7 +281,7 @@ extension TrackerViewController: UICollectionViewDataSource {
         cell?.dayLabel.text = String(localized: .daysCount(completedTrackers))
         cell?.dayLabel.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         
-        return cell!
+        return cell ?? UICollectionViewCell()
     }
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {

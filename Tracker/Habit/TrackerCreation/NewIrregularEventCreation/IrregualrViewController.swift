@@ -25,6 +25,8 @@ final class IrregularViewController: UIViewController {
     
     private let contentView = UIView()
     
+    private var tableViewTopConstraint: NSLayoutConstraint?
+    
 //    private var titleLabel: UILabel = {
 //        let titleLabel = UILabel()
 //        titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -39,7 +41,20 @@ final class IrregularViewController: UIViewController {
         searchBar.borderStyle = .roundedRect
         searchBar.placeholder = "Введите название трекера"
         searchBar.translatesAutoresizingMaskIntoConstraints = false
+        searchBar.clearButtonMode = .whileEditing
+        searchBar.backgroundColor = .backgroundDay
         return searchBar
+    }()
+    
+    private let limitLabel: UILabel = {
+        let limitLabel = UILabel()
+        limitLabel.text = "Ограничение 38 символов"
+        limitLabel.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        limitLabel.textColor = .red
+        limitLabel.isHidden = true
+        limitLabel.textAlignment = .center
+        limitLabel.translatesAutoresizingMaskIntoConstraints = false
+        return limitLabel
     }()
     
     private let tableView: UITableView = {
@@ -47,6 +62,7 @@ final class IrregularViewController: UIViewController {
         tableView.register(IrregularViewCell.self, forCellReuseIdentifier: IrregularViewCell.reuseIdentifier)
         tableView.layer.masksToBounds = true
         tableView.layer.cornerRadius = 10
+        tableView.rowHeight = 75
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
@@ -108,6 +124,7 @@ final class IrregularViewController: UIViewController {
         
         tableView.delegate = self
         tableView.dataSource = self
+        searchBar.delegate = self
 
         emojiCollection.delegate = self
         colorCollection.delegate = self
@@ -120,6 +137,7 @@ final class IrregularViewController: UIViewController {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         contentView.addSubview(searchBar)
+        contentView.addSubview(limitLabel)
         contentView.addSubview(tableView)
         contentView.addSubview(stack)
         stack.addArrangedSubview(cancelButton)
@@ -128,6 +146,11 @@ final class IrregularViewController: UIViewController {
         colorCollection.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(emojiCollection)
         contentView.addSubview(colorCollection)
+        
+        view.backgroundColor = .white
+        scrollView.backgroundColor = .white
+        contentView.backgroundColor = .white
+        tableView.backgroundColor = .white
     }
     
     private func setupTitle() {
@@ -139,6 +162,10 @@ final class IrregularViewController: UIViewController {
     }
     
     private func setupConstraints() {
+        
+        tableViewTopConstraint = tableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 24)
+        tableViewTopConstraint?.isActive = true
+        
         NSLayoutConstraint.activate([
 ////            titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 27),
 ////            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -176,8 +203,13 @@ final class IrregularViewController: UIViewController {
             searchBar.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             searchBar.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             searchBar.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            searchBar.heightAnchor.constraint(equalToConstant: 75),
             
-            tableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 24),
+            limitLabel.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 8),
+            limitLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 28),
+            limitLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -28),
+            
+//            tableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 24),
             tableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             tableView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
@@ -241,13 +273,31 @@ extension IrregularViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: IrregularViewCell.reuseIdentifier, for: indexPath) as! IrregularViewCell
-        cell.textLabel?.text = items[indexPath.row]
-        cell.textLabel?.font = UIFont.systemFont(ofSize: 17, weight: .medium)
-        cell.textLabel?.textColor = .blackDay
-        cell.backgroundColor = .backgroundDay
-        cell.accessoryType = .disclosureIndicator
-        return cell
+        let cell = tableView.dequeueReusableCell(withIdentifier: IrregularViewCell.reuseIdentifier, for: indexPath) as? IrregularViewCell
+        cell?.textLabel?.text = items[indexPath.row]
+        cell?.textLabel?.font = UIFont.systemFont(ofSize: 17, weight: .medium)
+        cell?.textLabel?.textColor = .blackDay
+        cell?.backgroundColor = .backgroundDay
+        cell?.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
+        cell?.accessoryType = .disclosureIndicator
+        return cell ?? UITableViewCell()
+    }
+}
+
+extension IrregularViewController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let currentText = textField.text ?? ""
+        guard let stringRange = Range(range, in: currentText) else { return false }
+        
+        let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
+        
+        let isOverLimit = updatedText.count > 38
+        
+        limitLabel.isHidden = !isOverLimit
+        
+        tableViewTopConstraint?.constant = isOverLimit ? 62 : 24
+        
+        return updatedText.count <= 38
     }
 }
 
