@@ -7,30 +7,43 @@ protocol HabitViewDelegate: AnyObject {
 
 final class HabitView: UIViewController {
     
+    // MARK: - Properties
     weak var delegate: HabitViewDelegate?
-    
+    private let emojiCollection = EmojiCollectionView()
+    private let colorCollection = ColorCollectionView()
     private var selectedDays: [Weekday] = []
-    
+    private var selectedEmoji: String?
+    private var tableViewTopConstraint: NSLayoutConstraint?
     private var items: [String] = [
         "Категория",
         "Расписание"
     ]
     
-    private var titleLabel: UILabel = {
-        let titleLabel = UILabel()
-        titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        titleLabel.textColor = .blackDay
-        titleLabel.text = "Новая привычка"
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        return titleLabel
-    }()
+    // MARK: - UI
     
+    private let scrollView = UIScrollView()
+    private var selectedColor: UIColor?
+    private let contentView = UIView()
+
     private var searchBar: UITextField = {
         let searchBar = UITextField()
         searchBar.borderStyle = .roundedRect
         searchBar.placeholder = "Введите название трекера"
         searchBar.translatesAutoresizingMaskIntoConstraints = false
+        searchBar.clearButtonMode = .whileEditing
+        searchBar.backgroundColor = .backgroundDay
         return searchBar
+    }()
+    
+    private let limitLabel: UILabel = {
+        let limitLabel = UILabel()
+        limitLabel.text = "Ограничение 38 символов"
+        limitLabel.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        limitLabel.textColor = .red
+        limitLabel.isHidden = true
+        limitLabel.textAlignment = .center
+        limitLabel.translatesAutoresizingMaskIntoConstraints = false
+        return limitLabel
     }()
     
     private let tableView: UITableView = {
@@ -38,6 +51,8 @@ final class HabitView: UIViewController {
         tableView.register(HabitViewCell.self, forCellReuseIdentifier: HabitViewCell.reuseIdentifier)
         tableView.layer.masksToBounds = true
         tableView.layer.cornerRadius = 10
+        tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
+        tableView.rowHeight = 75
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
@@ -75,13 +90,12 @@ final class HabitView: UIViewController {
         return stack
     }()
     
+    // MARK: - Init
+
     init() {
         super.init(nibName: nil, bundle: nil)
-        
         cancelButton.addTarget(self, action: #selector(tapCancelButton), for: .touchUpInside)
-        
         createButton.addTarget(self, action: #selector(tapCreateButton), for: .touchUpInside)
-        
         searchBar.addTarget(self, action: #selector(textChanged), for: .editingChanged)
     }
     
@@ -89,48 +103,111 @@ final class HabitView: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Lifecycle
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         
         tableView.delegate = self
         tableView.dataSource = self
+        searchBar.delegate = self
+        
+        emojiCollection.delegate = self
+        colorCollection.delegate = self
+        
         setupConstraints()
         setupUIGesture()
+        setupTitle()
     }
     
+    // MARK: - Setup
+    
     private func setupUI() {
-        view.addSubview(titleLabel)
-        view.addSubview(searchBar)
-        view.addSubview(tableView)
-        view.addSubview(stack)
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        
+        contentView.addSubview(searchBar)
+        contentView.addSubview(limitLabel)
+        contentView.addSubview(tableView)
+        contentView.addSubview(stack)
+        
         stack.addArrangedSubview(cancelButton)
         stack.addArrangedSubview(createButton)
+        
+        emojiCollection.translatesAutoresizingMaskIntoConstraints = false
+        colorCollection.translatesAutoresizingMaskIntoConstraints = false
+        
+        contentView.addSubview(emojiCollection)
+        contentView.addSubview(colorCollection)
+        
+        view.backgroundColor = .white
+        scrollView.backgroundColor = .white
+        contentView.backgroundColor = .white
+        tableView.backgroundColor = .white
+    }
+    
+    private func setupTitle() {
+        navigationItem.title = "Новая привычка"
+        navigationController?.navigationBar.titleTextAttributes = [
+            .font: UIFont.systemFont(ofSize: 16, weight: .medium),
+            .foregroundColor: UIColor.blackDay
+        ]
     }
     
     func setupConstraints() {
+        tableViewTopConstraint = tableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 24)
+        tableViewTopConstraint?.isActive = true
+        
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 27),
-            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
-            searchBar.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 38),
-            searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            searchBar.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+                        
+            searchBar.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: 24),
+            searchBar.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            searchBar.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            searchBar.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            searchBar.heightAnchor.constraint(equalToConstant: 75),
             
-            tableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 24),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            tableView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            limitLabel.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 8),
+            limitLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 28),
+            limitLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -28),
+            
+            tableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            tableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            tableView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             tableView.heightAnchor.constraint(equalToConstant: 150),
             
-            stack.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            stack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            stack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            stack.heightAnchor.constraint(equalToConstant: 60)
+            stack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
+            stack.topAnchor.constraint(equalTo: colorCollection.bottomAnchor, constant: 16),
+            stack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            stack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            stack.heightAnchor.constraint(equalToConstant: 60),
+            
+            emojiCollection.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 32),
+            emojiCollection.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            emojiCollection.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            emojiCollection.heightAnchor.constraint(equalToConstant: 204),
+            
+            colorCollection.topAnchor.constraint(equalTo: emojiCollection.bottomAnchor, constant: 16),
+            colorCollection.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            colorCollection.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            colorCollection.heightAnchor.constraint(equalToConstant: 204),
         ])
     }
     
+    // MARK: - Actions
+
     @objc func tapCancelButton() {
         dismiss(animated: true)
     }
@@ -140,8 +217,9 @@ final class HabitView: UIViewController {
               !trackerName.isEmpty else { return }
         let tracker = Tracker(id: UUID(),
                               name: trackerName,
-                              color: UIColor(red: 0.5, green: 0.5, blue: 1, alpha: 1),
-                              emoji: "",
+//                              color: UIColor(red: 0.5, green: 0.5, blue: 1, alpha: 1),
+                              color: selectedColor ?? UIColor(red: 0.5, green: 0.5, blue: 1, alpha: 1),
+                              emoji: selectedEmoji ?? "",
                               schedule: selectedDays)
         delegate?.didCreateTracker(tracker, category: "Общее")
         view.window?.rootViewController?.dismiss(animated: true)
@@ -152,16 +230,35 @@ final class HabitView: UIViewController {
         createButton.backgroundColor = createButton.isEnabled ? .blackDay : .ypGray
     }
     
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
+    }
+    
+    // MARK: - Private Methods
+    
     private func setupUIGesture() {
         let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
     }
     
-    @objc func dismissKeyboard() {
-        view.endEditing(true)
+    private func formatScheduleText(_ days: [Weekday]) -> String {
+        if days.isEmpty {
+            return ""
+        }
+        
+        if days.count == 7 {
+            return "Каждый день"
+        }
+        
+        let sortedDays = days.sorted { $0.numberValue < $1.numberValue }
+        let shortNames = sortedDays.map { $0.shortNames }
+        
+        return shortNames.joined(separator: ", ")
     }
 }
+
+// MARK: - UITableViewDataSource
 
 extension HabitView: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -169,14 +266,44 @@ extension HabitView: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: HabitViewCell.reuseIdentifier, for: indexPath) as! HabitViewCell
+        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
         cell.textLabel?.text = items[indexPath.row]
         cell.textLabel?.font = UIFont.systemFont(ofSize: 17, weight: .medium)
         cell.textLabel?.textColor = .blackDay
         cell.backgroundColor = .backgroundDay
+        cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
+        cell.accessoryType = .disclosureIndicator
+        if indexPath.row == 1 {
+            cell.detailTextLabel?.text = formatScheduleText(selectedDays)
+            
+            cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+            cell.detailTextLabel?.textColor = .ypGray
+        }
+        
         return cell
     }
 }
+
+// MARK: - UITableViewDelegate
+
+extension HabitView: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let currentText = textField.text ?? ""
+        guard let stringRange = Range(range, in: currentText) else { return false }
+        
+        let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
+        
+        let isOverLimit = updatedText.count > 38
+        
+        limitLabel.isHidden = !isOverLimit
+        
+        tableViewTopConstraint?.constant = isOverLimit ? 62 : 24
+        
+        return updatedText.count <= 38
+    }
+}
+
+// MARK: - Delegates
 
 extension HabitView: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -187,6 +314,7 @@ extension HabitView: UITableViewDelegate {
         switch indexPath.row {
         case 0:
             destinationVC = CategoryViewController()
+            return
         case 1:
             let scheduleVC = ScheduleViewController()
             scheduleVC.delegate = self
@@ -201,6 +329,18 @@ extension HabitView: UITableViewDelegate {
 extension HabitView: ScheduleViewControllerDelegate {
     func didSelectDays(_ weekday: [Weekday]) {
         self.selectedDays = weekday
-        print("выбранные дни: \(weekday.map { $0.rawValue })")
+        tableView.reloadData()
+    }
+}
+
+extension HabitView: EmojiCollectionViewDelegate {
+    func didSelectEmoji(_ emoji: String) {
+        self.selectedEmoji = emoji
+    }
+}
+
+extension HabitView: ColorCollectionViewDelegate {
+    func didSelectColor(_ color: UIColor) {
+        self.selectedColor = color
     }
 }
