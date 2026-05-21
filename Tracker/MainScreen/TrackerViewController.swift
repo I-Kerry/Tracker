@@ -24,8 +24,6 @@ final class TrackerViewController: UIViewController, TrackerViewCellDelegate {
         return collectionView
     }()
     
-    
-    
     private lazy var placeholder: UIView = {
         let view = UIView()
         view.backgroundColor = .white
@@ -76,6 +74,9 @@ final class TrackerViewController: UIViewController, TrackerViewCellDelegate {
         
         self.view.backgroundColor = .white
         
+        setupUI()
+        setupConstraints()
+        
         collectionView.delegate = self
         collectionView.dataSource = self
         
@@ -84,10 +85,10 @@ final class TrackerViewController: UIViewController, TrackerViewCellDelegate {
         trackerRecordStore.delegate = self
         
         categories = trackerCategoryStore.fetchCategories()
-        visibleCategories = categories
+//        visibleCategories = categories
+        reloadVisibleCategories()
         
-        setupUI()
-        setupConstraints()
+        
         updatePlaceholder()
         setupUIGesture()
     }
@@ -379,7 +380,9 @@ extension TrackerViewController: TrackerCategoryStoreDelegate {
 //        }, completion: { _ in
 //            self.visibleCategories = self.trackerCategoryStore.fetchCategories()
 //        })
-        visibleCategories = trackerCategoryStore.fetchCategories()
+//        visibleCategories = trackerCategoryStore.fetchCategories()
+        categories = trackerCategoryStore.fetchCategories()
+        reloadVisibleCategories()
         collectionView.reloadData()
     }
 }

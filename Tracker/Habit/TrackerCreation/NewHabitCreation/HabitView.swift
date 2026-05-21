@@ -11,8 +11,11 @@ final class HabitView: UIViewController {
     weak var delegate: HabitViewDelegate?
     private let emojiCollection = EmojiCollectionView()
     private let colorCollection = ColorCollectionView()
+    private let categoryVC = CategoryViewController()
+    private let scheduleVC = ScheduleViewController()
     private var selectedDays: [Weekday] = []
     private var selectedEmoji: String?
+    private var selectedCategory: String?
     private var tableViewTopConstraint: NSLayoutConstraint?
     private var items: [String] = [
         "Категория",
@@ -221,7 +224,7 @@ final class HabitView: UIViewController {
                               color: selectedColor ?? UIColor(red: 0.5, green: 0.5, blue: 1, alpha: 1),
                               emoji: selectedEmoji ?? "",
                               schedule: selectedDays)
-        delegate?.didCreateTracker(tracker, category: "Общее")
+        delegate?.didCreateTracker(tracker, category: selectedCategory ?? "")
         view.window?.rootViewController?.dismiss(animated: true)
     }
     
@@ -275,7 +278,11 @@ extension HabitView: UITableViewDataSource {
         cell.accessoryType = .disclosureIndicator
         if indexPath.row == 1 {
             cell.detailTextLabel?.text = formatScheduleText(selectedDays)
-            
+            cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+            cell.detailTextLabel?.textColor = .ypGray
+        }
+        if indexPath.row == 0 {
+            cell.detailTextLabel?.text = selectedCategory ?? ""
             cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
             cell.detailTextLabel?.textColor = .ypGray
         }
@@ -285,6 +292,32 @@ extension HabitView: UITableViewDataSource {
 }
 
 // MARK: - UITableViewDelegate
+
+extension HabitView: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        let destinationVC: UIViewController
+        
+        switch indexPath.row {
+        case 0:
+            categoryVC.onCategorySelected = { [weak self] title in
+                guard let self else { return }
+                self.selectedCategory = title
+                self.tableView.reloadData()
+            }
+            destinationVC = categoryVC
+        case 1:
+            scheduleVC.delegate = self
+            destinationVC = scheduleVC
+        default:
+            return
+        }
+        navigationController?.pushViewController(destinationVC, animated: true)
+    }
+}
+
+// MARK: - Delegates
 
 extension HabitView: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
@@ -300,29 +333,6 @@ extension HabitView: UITextFieldDelegate {
         tableViewTopConstraint?.constant = isOverLimit ? 62 : 24
         
         return updatedText.count <= 38
-    }
-}
-
-// MARK: - Delegates
-
-extension HabitView: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        
-        let destinationVC: UIViewController
-        
-        switch indexPath.row {
-        case 0:
-            destinationVC = CategoryViewController()
-            return
-        case 1:
-            let scheduleVC = ScheduleViewController()
-            scheduleVC.delegate = self
-            destinationVC = scheduleVC
-        default:
-            return
-        }
-        navigationController?.pushViewController(destinationVC, animated: true)
     }
 }
 

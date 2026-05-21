@@ -77,6 +77,24 @@ final class TrackerCategoryStore: NSObject {
         }
         return results
     }
+    
+    func addCategory(title: String) {
+        let trackerCategoryCD = TrackerCategoryCoreData(context: context)
+        trackerCategoryCD.header = title
+        try? context.save()
+    }
+    
+    func deleteCategory(at index: Int) {
+        guard let object = fetchedResultsController.fetchedObjects?[index] else { return }
+        context.delete(object)
+        try? context.save()
+    }
+    
+    func updateCategory(at index: Int, newTitle: String) {
+        guard let object = fetchedResultsController.fetchedObjects?[index] else { return }
+        object.header = newTitle
+        try? context.save()
+    }
 }
 
 extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
