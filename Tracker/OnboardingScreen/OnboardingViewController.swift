@@ -3,8 +3,7 @@ import UIKit
 
 final class OnboardingViewController: UIPageViewController {
     
-    lazy var pages: [UIViewController] = {
-        return [
+    lazy var pages: [UIViewController] = {[
             OnboardingPageViewController(imageName: "onboardingBlue", text: "Отслеживайте только\nто, что хотите"),
             OnboardingPageViewController(imageName: "onboardingPink", text: "Даже если это\nне литры воды и йога")
         ]
@@ -38,8 +37,9 @@ final class OnboardingViewController: UIPageViewController {
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal)
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        nil
     }
     
     override func viewDidLoad() {
@@ -73,7 +73,7 @@ final class OnboardingViewController: UIPageViewController {
     }
     
     @objc func buttonTapped() {
-        UserDefaults.standard.set(true, forKey: "onboardingShown")
+        UserDefaultsService.shared.isOnboardingCompleted = true
         guard let window = view.window else { return }
         window.rootViewController = TabBarViewController()
     }

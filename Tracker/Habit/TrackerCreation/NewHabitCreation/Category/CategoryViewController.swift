@@ -100,7 +100,7 @@ extension CategoryViewController: UITableViewDelegate {
         }
         
         let delete = UIAction(title: "Удалить", attributes: .destructive) { [weak self] _ in
-            DispatchQueue.main.async { [weak self] in
+            DispatchQueue.main.async { 
                 self?.showDeleteAlert(at: indexPath.row)
             }
 //            self.viewModel.deleteCategory(at: indexPath.row)

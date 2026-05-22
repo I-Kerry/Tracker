@@ -102,8 +102,9 @@ final class HabitView: UIViewController {
         searchBar.addTarget(self, action: #selector(textChanged), for: .editingChanged)
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        nil
     }
     
     // MARK: - Lifecycle

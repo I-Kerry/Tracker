@@ -19,15 +19,13 @@ final class CategoryView: UIView {
         view.backgroundColor = .white
         view.isHidden = true
         
-        let imageView = UIImageView(image: UIImage(named: "noTrackers"))
+        let imageView = UIImageView(image: UIImage(resource: .noTrackers))
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
         let label = UILabel()
         label.text = "Привычки и события можно\nобъединить по смыслу"
-//        label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textColor = .blackDay
-//        label.textAlignment = .center
         label.numberOfLines = 0
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.minimumLineHeight = 16
@@ -79,8 +77,9 @@ final class CategoryView: UIView {
         setupConstraints()
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        nil
     }
     
     private func setupUI() {

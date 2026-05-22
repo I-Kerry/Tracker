@@ -41,8 +41,9 @@ final class ColorCollectionView: UIView {
         ])
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        nil
     }
 }
 
@@ -60,7 +61,6 @@ extension ColorCollectionView: UICollectionViewDataSource {
 
 extension ColorCollectionView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        return CGSize(width: (collectionView.bounds.width - 5 * 5) / 6, height: 52)
         return CGSize(width: (UIScreen.main.bounds.width - 32 - 5 * 5) / 6, height: 52)
     }
     
