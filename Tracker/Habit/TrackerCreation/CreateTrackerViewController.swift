@@ -46,8 +46,9 @@ final class CreateTrackerViewController: UIViewController {
         irregularButton.addTarget(self, action: #selector(didTapIrregularButton), for: .touchUpInside)
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        nil
     }
     
     override func viewDidLoad() {

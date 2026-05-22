@@ -14,28 +14,16 @@ final class IrregularViewController: UIViewController {
     weak var delegate: IrregularViewControllerDelegate?
     
     private let emojiCollection = EmojiCollectionView()
-    
     private let colorCollection = ColorCollectionView()
-    
     private var selectedEmoji: String?
+    private var selectedCategory: String?
     
     private var selectedColor: UIColor?
-    
     private let scrollView = UIScrollView()
-    
     private let contentView = UIView()
     
     private var tableViewTopConstraint: NSLayoutConstraint?
-    
-//    private var titleLabel: UILabel = {
-//        let titleLabel = UILabel()
-//        titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-//        titleLabel.textColor = .blackDay
-//        titleLabel.text = "Новое нерегулярное событие"
-//        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-//        return titleLabel
-//    }()
-    
+     
     private var searchBar: UITextField = {
         let searchBar = UITextField()
         searchBar.borderStyle = .roundedRect
@@ -110,8 +98,9 @@ final class IrregularViewController: UIViewController {
         searchBar.addTarget(self, action: #selector(textChanged), for: .editingChanged)
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        nil
     }
     
     override func viewDidLoad() {
@@ -131,7 +120,6 @@ final class IrregularViewController: UIViewController {
     }
     
     private func setupUI() {
-//        view.addSubview(titleLabel)
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         contentView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(scrollView)
@@ -167,24 +155,7 @@ final class IrregularViewController: UIViewController {
         tableViewTopConstraint?.isActive = true
         
         NSLayoutConstraint.activate([
-////            titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 27),
-////            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-//            
-//            searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
-//            searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-//            searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-//            searchBar.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-//            
-//            tableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 24),
-//            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-//            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-//            tableView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-//            tableView.heightAnchor.constraint(equalToConstant: 75),
-//            
-//            stack.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-//            stack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-//            stack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-//            stack.heightAnchor.constraint(equalToConstant: 60)
+
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -195,10 +166,7 @@ final class IrregularViewController: UIViewController {
             contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-            
-//            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 0),
-//            titleLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            
+                        
             searchBar.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: 24),
             searchBar.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             searchBar.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
@@ -209,13 +177,11 @@ final class IrregularViewController: UIViewController {
             limitLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 28),
             limitLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -28),
             
-//            tableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 24),
             tableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             tableView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             tableView.heightAnchor.constraint(equalToConstant: 75),
             
-//            stack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             stack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
             stack.topAnchor.constraint(equalTo: colorCollection.bottomAnchor, constant: 16),
             stack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
@@ -243,11 +209,10 @@ final class IrregularViewController: UIViewController {
               !trackerName.isEmpty else { return }
         let tracker = Tracker(id: UUID(),
                               name: trackerName,
-//                              color: UIColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 1),
                               color: selectedColor ?? UIColor(red: 0.5, green: 0.5, blue: 1, alpha: 1),
                               emoji: selectedEmoji ?? "",
                               schedule: [])
-        delegate?.didCreateIrregularTracker(tracker, category: "Тоже общее, но другое")
+        delegate?.didCreateIrregularTracker(tracker, category: selectedCategory ?? "")
         dismiss(animated: true)
     }
     
@@ -280,6 +245,12 @@ extension IrregularViewController: UITableViewDataSource {
         cell?.backgroundColor = .backgroundDay
         cell?.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
         cell?.accessoryType = .disclosureIndicator
+        
+        if indexPath.row == 0 {
+            cell?.detailTextLabel?.text = selectedCategory ?? ""
+            cell?.detailTextLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+            cell?.detailTextLabel?.textColor = .ypGray
+        }
         return cell ?? UITableViewCell()
     }
 }
@@ -302,7 +273,25 @@ extension IrregularViewController: UITextFieldDelegate {
 }
 
 extension IrregularViewController: UITableViewDelegate {
-    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        let destinationVC: UIViewController
+        
+        switch indexPath.row {
+        case 0:
+            let categoryVC = CategoryViewController()
+            categoryVC.onCategorySelected = { [weak self] title in
+                guard let self else { return }
+                self.selectedCategory = title
+                self.tableView.reloadData()
+            }
+            destinationVC = categoryVC
+        default:
+            return
+        }
+        navigationController?.pushViewController(destinationVC, animated: true)
+    }
 }
 
 extension IrregularViewController: EmojiCollectionViewDelegate {
