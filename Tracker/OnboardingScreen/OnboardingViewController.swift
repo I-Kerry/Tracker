@@ -4,8 +4,8 @@ import UIKit
 final class OnboardingViewController: UIPageViewController {
     
     lazy var pages: [UIViewController] = {[
-            OnboardingPageViewController(imageName: "onboardingBlue", text: "Отслеживайте только\nто, что хотите"),
-            OnboardingPageViewController(imageName: "onboardingPink", text: "Даже если это\nне литры воды и йога")
+        OnboardingPageViewController(imageName: "onboardingBlue", text: String(localized: .onboardingfirst)),
+        OnboardingPageViewController(imageName: "onboardingPink", text: String(localized: .onboardingSecond))
         ]
     }()
     
@@ -14,16 +14,16 @@ final class OnboardingViewController: UIPageViewController {
         pageControl.numberOfPages = pages.count
         pageControl.currentPage = 0
         
-        pageControl.currentPageIndicatorTintColor = .blackDay
-        pageControl.pageIndicatorTintColor = UIColor.blackDay.withAlphaComponent(0.3)
+        pageControl.currentPageIndicatorTintColor = .black
+        pageControl.pageIndicatorTintColor = UIColor.black.withAlphaComponent(0.3)
         pageControl.translatesAutoresizingMaskIntoConstraints = false
         return pageControl
     }()
 
     private var button: UIButton = {
         let button = UIButton()
-        button.backgroundColor = .blackDay
-        button.setTitle("Вот это технологии!", for: .normal)
+        button.backgroundColor = .black
+        button.setTitle(String(localized: .technology), for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.setTitleColor(.white, for: .normal)
         button.layer.masksToBounds = true

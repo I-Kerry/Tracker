@@ -64,6 +64,29 @@ final class TrackerStore: NSObject {
         
         try context.save()
     }
+    
+    func deleteTracker(_ tracker: Tracker) throws {
+        let request = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
+        request.predicate = NSPredicate(format: "id == %@", tracker.id as CVarArg)
+        let result = try context.fetch(request)
+        if let trackerCD = result.first {
+            context.delete(trackerCD)
+            try context.save()
+        }
+    }
+    
+    func updateTracker(_ tracker: Tracker) throws {
+        let request = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
+        request.predicate = NSPredicate(format: "id == %@", tracker.id as CVarArg)
+        let result = try context.fetch(request)
+        if let trackerCD = result.first {
+            trackerCD.name = tracker.name
+            trackerCD.id = tracker.id
+            trackerCD.color = colorMarshalling.hexString(from: tracker.color)
+            trackerCD.schedule = tracker.schedule.map { $0.numberValue } as NSArray
+            try context.save()
+        }
+    }
 }
 
 extension TrackerStore: NSFetchedResultsControllerDelegate {

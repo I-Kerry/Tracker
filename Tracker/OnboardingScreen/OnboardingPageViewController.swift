@@ -8,9 +8,11 @@ final class OnboardingPageViewController: UIViewController {
     var label: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
-        label.textColor = .blackDay
+        label.textColor = .black
         label.textAlignment = .center
         label.numberOfLines = 2
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.7
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()

@@ -100,7 +100,6 @@ final class TrackerViewCell: UICollectionViewCell {
         label.text = tracker.name
         cellColored.backgroundColor = tracker.color.withAlphaComponent(0.3)
         button.backgroundColor = tracker.color
-//        cellColored.alpha = 0.3
         
         if isCompleted {
             button.setImage(UIImage(systemName: "checkmark"), for: .normal)

@@ -9,6 +9,8 @@ final class ColorCollectionView: UIView {
     
     weak var delegate: ColorCollectionViewDelegate?
     
+    private let colors = Colors()
+    
     private let colorArray = [
         UIColor.colorSection1, UIColor.colorSection2, UIColor.colorSection3, UIColor.colorSection4, UIColor.colorSection5, UIColor.colorSection6, UIColor.colorSection7, UIColor.colorSection8, UIColor.colorSection9, UIColor.colorSection10, UIColor.colorSection11, UIColor.colorSection12, UIColor.colorSection13, UIColor.colorSection14, UIColor.colorSection15, UIColor.colorSection16, UIColor.colorSection17, UIColor.colorSection18, 
     ]
@@ -24,8 +26,8 @@ final class ColorCollectionView: UIView {
         
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         self.addSubview(collectionView)
-        collectionView.backgroundColor = .white
-        self.backgroundColor = .white
+        collectionView.backgroundColor = colors.viewBackgroundColor
+        self.backgroundColor = colors.viewBackgroundColor
         
         collectionView.dataSource = self
         collectionView.delegate = self
@@ -69,7 +71,7 @@ extension ColorCollectionView: UICollectionViewDelegateFlowLayout {
     }
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "header", for: indexPath) as! SupplementaryView
-        view.titleLabel.text = "Цвет"
+        view.titleLabel.text = /*"Цвет"*/ String(localized: .color)
         view.titleLabel.textAlignment = .left
         return view
     }

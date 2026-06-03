@@ -2,6 +2,8 @@
 import UIKit
 
 final class CategoryView: UIView {
+    
+    private let colors = Colors()
         
     let tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
@@ -16,7 +18,7 @@ final class CategoryView: UIView {
     
     lazy var placeholder: UIView = {
         let view = UIView()
-        view.backgroundColor = .white
+        view.backgroundColor = colors.viewBackgroundColor
         view.isHidden = true
         
         let imageView = UIImageView(image: UIImage(resource: .noTrackers))
@@ -24,7 +26,7 @@ final class CategoryView: UIView {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
         let label = UILabel()
-        label.text = "Привычки и события можно\nобъединить по смыслу"
+        label.text = String(localized: .habitsCombination)
         label.textColor = .blackDay
         label.numberOfLines = 0
         let paragraphStyle = NSMutableParagraphStyle()
@@ -61,9 +63,9 @@ final class CategoryView: UIView {
     var button: UIButton = {
         let button = UIButton()
         button.backgroundColor = .blackDay
-        button.setTitle("Добавить категорию", for: .normal)
+        button.setTitle(String(localized: .addCategory), for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.blackNight, for: .normal)
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 16
         
