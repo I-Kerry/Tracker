@@ -14,7 +14,6 @@ final class HabitView: UIViewController {
     private let categoryVC = CategoryViewController()
     private let scheduleVC = ScheduleViewController()
     private let trackerStore = TrackerStore()
-    private let colors = Colors()
     private var selectedDays: [Weekday] = []
     private var selectedEmoji: String?
     private var selectedCategory: String?
@@ -151,9 +150,9 @@ final class HabitView: UIViewController {
         contentView.addSubview(emojiCollection)
         contentView.addSubview(colorCollection)
         
-        view.backgroundColor = colors.viewBackgroundColor
-        scrollView.backgroundColor = colors.viewBackgroundColor
-        contentView.backgroundColor = colors.viewBackgroundColor
+        view.backgroundColor = Colors.viewBackgroundColor
+        scrollView.backgroundColor = Colors.viewBackgroundColor
+        contentView.backgroundColor = Colors.viewBackgroundColor
         tableView.backgroundColor = .white
     }
     

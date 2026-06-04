@@ -3,10 +3,10 @@
 import UIKit
 
 enum StatisticsType: String, CaseIterable {
-    case bestPeriod = "bestPeriod"
+    case bestPeriod
     case idealDays = "perfectDays"
-    case completedTrackers = "completedTrackers"
-    case averageValue = "averageValue"
+    case completedTrackers
+    case averageValue
     
     var localized: String {
         String(localized: String.LocalizationValue(rawValue))

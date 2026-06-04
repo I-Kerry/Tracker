@@ -21,7 +21,6 @@ final class IrregularViewController: UIViewController {
     private var selectedColor: UIColor?
     private let scrollView = UIScrollView()
     private let contentView = UIView()
-    private let colors = Colors()
     
     private var tableViewTopConstraint: NSLayoutConstraint?
      
@@ -136,7 +135,7 @@ final class IrregularViewController: UIViewController {
         contentView.addSubview(emojiCollection)
         contentView.addSubview(colorCollection)
         
-        view.backgroundColor = colors.viewBackgroundColor
+        view.backgroundColor = Colors.viewBackgroundColor
         scrollView.backgroundColor = .blackNight
         contentView.backgroundColor = .blackNight
         tableView.backgroundColor = .blackNight

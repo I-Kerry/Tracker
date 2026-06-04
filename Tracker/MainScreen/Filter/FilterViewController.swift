@@ -10,7 +10,6 @@ final class FilterViewController: UIViewController {
     
     weak var delegate: FilterViewControllerDelegate?
     var selectedFilter: TrackerFilter?
-    private var colors = Colors()
     
     private var tableView: UITableView = {
         let tableView = UITableView()
@@ -35,7 +34,7 @@ final class FilterViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = colors.viewBackgroundColor
+        view.backgroundColor = Colors.viewBackgroundColor
         view.addSubview(tableView)
         setupConstraints()
         setupTitle()

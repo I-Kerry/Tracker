@@ -6,9 +6,7 @@ final class CreateTrackerViewController: UIViewController {
     weak var delegateHabit: HabitViewDelegate?
     
     weak var delegateIrregular: IrregularViewControllerDelegate?
-    
-    private var colors = Colors()
-    
+        
     private let habitButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = .blackDay
@@ -46,7 +44,7 @@ final class CreateTrackerViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = colors.viewBackgroundColor
+        view.backgroundColor = Colors.viewBackgroundColor
         setupUI()
         setupConstraints()
         setupTitle()

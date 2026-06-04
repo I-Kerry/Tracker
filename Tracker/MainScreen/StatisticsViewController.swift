@@ -5,7 +5,6 @@ final class StatisticsViewController: UIViewController {
     
     private var statistics: [StatisticsType] = StatisticsType.allCases
     private var trackerRecordStore = TrackerRecordStore()
-    private var colors = Colors()
     private var recordsCount: Int = 0
     private var trackerCategoryStore = TrackerCategoryStore()
     
@@ -68,7 +67,7 @@ final class StatisticsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.view.backgroundColor = colors.viewBackgroundColor
+        self.view.backgroundColor = Colors.viewBackgroundColor
         collectionView.delegate = self
         collectionView.dataSource = self
         updatePlaceholder()
@@ -183,7 +182,7 @@ extension StatisticsViewController: UICollectionViewDelegate {
 
 extension StatisticsViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return StatisticsType.allCases.count
+        StatisticsType.allCases.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

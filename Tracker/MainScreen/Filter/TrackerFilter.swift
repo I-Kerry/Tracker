@@ -2,10 +2,10 @@
 import Foundation
 
 enum TrackerFilter: String, CaseIterable {
-    case allTrackers = "allTrackers"
-    case todayTrackers = "todayTrackers"
-    case finishedTrackers = "finishedTrackers"
-    case unfinishedTrackers = "unfinishedTrackers"
+    case allTrackers
+    case todayTrackers
+    case finishedTrackers
+    case unfinishedTrackers
     
     var localized: String {
         String(localized: String.LocalizationValue(rawValue))

@@ -2,9 +2,7 @@
 import UIKit
 
 final class CategoryView: UIView {
-    
-    private let colors = Colors()
-        
+            
     let tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.register(CategoryViewCell.self, forCellReuseIdentifier: CategoryViewCell.reuseIdentifier)
@@ -18,7 +16,7 @@ final class CategoryView: UIView {
     
     lazy var placeholder: UIView = {
         let view = UIView()
-        view.backgroundColor = colors.viewBackgroundColor
+        view.backgroundColor = Colors.viewBackgroundColor
         view.isHidden = true
         
         let imageView = UIImageView(image: UIImage(resource: .noTrackers))

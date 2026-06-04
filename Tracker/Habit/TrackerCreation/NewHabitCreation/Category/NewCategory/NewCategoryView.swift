@@ -1,9 +1,7 @@
 
 import UIKit
 
-final class NewCategoryView: UIView {
-    private let colors = Colors()
-    
+final class NewCategoryView: UIView {    
     var textField: UITextField = {
         let textField = UITextField()
         textField.borderStyle = .roundedRect
@@ -31,7 +29,7 @@ final class NewCategoryView: UIView {
         
         setupUI()
         setupConstraints()
-        textField.backgroundColor = colors.viewBackgroundColor
+        textField.backgroundColor = Colors.viewBackgroundColor
     }
     
     @available(*, unavailable)

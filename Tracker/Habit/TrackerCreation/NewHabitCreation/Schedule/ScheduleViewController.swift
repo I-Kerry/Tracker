@@ -2,13 +2,13 @@
 import UIKit
 
 enum Weekday: String, CaseIterable {
-    case monday = "monday"
-    case tuesday = "tuesday"
-    case wednesday = "wednesday"
-    case thursday = "thursday"
-    case friday = "friday"
-    case saturday = "saturday"
-    case sunday = "sunday"
+    case monday
+    case tuesday
+    case wednesday
+    case thursday
+    case friday
+    case saturday
+    case sunday
     
     var numberValue: Int {
         switch self {
@@ -51,13 +51,11 @@ final class ScheduleViewController: UIViewController {
     private var selectedDays: [Weekday] = []
     
     weak var delegate: ScheduleViewControllerDelegate?
-    
-    private let colors = Colors()
-    
+        
     private let button: UIButton = {
         let button = UIButton()
         button.backgroundColor = .blackDay
-        button.setTitle(/*"Готово"*/ String(localized: .done), for: .normal)
+        button.setTitle(String(localized: .done), for: .normal)
         button.setTitleColor(.blackNight, for: .normal)
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 16
@@ -110,7 +108,7 @@ final class ScheduleViewController: UIViewController {
     private func setupUI() {
         view.addSubview(tableView)
         view.addSubview(button)
-        view.backgroundColor = colors.viewBackgroundColor
+        view.backgroundColor = Colors.viewBackgroundColor
         tableView.backgroundColor = .white
     }
     

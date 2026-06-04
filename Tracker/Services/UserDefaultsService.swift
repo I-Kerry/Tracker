@@ -10,7 +10,6 @@ final class UserDefaultsService {
     private enum Key {
         static let onboardingCompleted = "onboardingCompleted"
         static let activeFilter = "activeFilter"
-
     }
     
     var isOnboardingCompleted: Bool {

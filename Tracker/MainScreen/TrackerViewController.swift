@@ -9,7 +9,6 @@ final class TrackerViewController: UIViewController, TrackerViewCellDelegate {
     private let trackerStore = TrackerStore()
     private let trackerRecordStore = TrackerRecordStore()
     private let trackerCategoryStore = TrackerCategoryStore()
-    private let colors = Colors()
     
     private var visibleCategories: [TrackerCategory] = []
     var categories: [TrackerCategory] = []
@@ -32,7 +31,7 @@ final class TrackerViewController: UIViewController, TrackerViewCellDelegate {
     
     private lazy var placeholder: UIView = {
         let view = UIView()
-        view.backgroundColor = colors.viewBackgroundColor
+        view.backgroundColor = Colors.viewBackgroundColor
         view.isHidden = true
         
         let imageView = UIImageView(image: UIImage(resource: .noStatsFound))
@@ -79,7 +78,7 @@ final class TrackerViewController: UIViewController, TrackerViewCellDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = colors.viewBackgroundColor
+        self.view.backgroundColor = Colors.viewBackgroundColor
         
         setupUI()
         setupConstraints()
@@ -110,12 +109,12 @@ final class TrackerViewController: UIViewController, TrackerViewCellDelegate {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        AnalyticsService.shared.report(event: "open", screen: "Main", item: nil)
+        AnalyticsService.shared.report(event: .open, screen: .main, item: nil)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        AnalyticsService.shared.report(event: "close", screen: "Main", item: nil)
+        AnalyticsService.shared.report(event: .close, screen: .main, item: nil)
     }
 
     
@@ -155,7 +154,7 @@ final class TrackerViewController: UIViewController, TrackerViewCellDelegate {
         createTrackerVC.delegateIrregular = self
         createTrackerVC.delegateHabit = self
         present(navCreateTrackerVC, animated: true)
-        AnalyticsService.shared.report(event: "click", screen: "Main", item: "add_track")
+        AnalyticsService.shared.report(event: .click, screen: .main, item: .addTrack)
     }
     
     private func setupTitle() {
@@ -196,7 +195,7 @@ final class TrackerViewController: UIViewController, TrackerViewCellDelegate {
         filterVC.delegate = self
         let navVC = UINavigationController(rootViewController: filterVC)
         present(navVC, animated: true)
-        AnalyticsService.shared.report(event: "click", screen: "Main", item: "filter")
+        AnalyticsService.shared.report(event: .click, screen: .main, item: .filter)
     }
     
     private func setupDate() {
@@ -315,7 +314,7 @@ final class TrackerViewController: UIViewController, TrackerViewCellDelegate {
         visibleCategories = trackerCategoryStore.fetchCategories()
         reloadVisibleCategories()
         updatePlaceholder()
-        AnalyticsService.shared.report(event: "click", screen: "Main", item: "track")
+        AnalyticsService.shared.report(event: .click, screen: .main, item: .track)
     }
     
     private func setupUIGesture() {
@@ -337,7 +336,7 @@ final class TrackerViewController: UIViewController, TrackerViewCellDelegate {
         alert.addAction(UIAlertAction(title: String(localized: .delete), style: .destructive) { [weak self] _ in
             guard let self else { return }
             try? self.trackerStore.deleteTracker(tracker)
-            AnalyticsService.shared.report(event: "click", screen: "Main", item: "delete")
+            AnalyticsService.shared.report(event: .click, screen: .main, item: .delete)
         })
         
         alert.addAction(UIAlertAction(title: String(localized: .cancel), style: .cancel))
@@ -424,7 +423,7 @@ extension TrackerViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         let edit = UIAction(title: String(localized: .edit)) { [weak self] _ in
             guard let self else { return }
-            AnalyticsService.shared.report(event: "click", screen: "Main", item: "edit")
+            AnalyticsService.shared.report(event: .click, screen: .main, item: .edit)
             let habitVC = HabitView()
             habitVC.editingTracker = self.visibleCategories[indexPath.section].trackerArray[indexPath.row]
             self.navigationController?.pushViewController(habitVC, animated: true)

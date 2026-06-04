@@ -24,7 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 NSSecureUnarchiveFromDataTransformer(),
                 forName: NSValueTransformerName("NSSecureUnarchiveFromDataTransformerName")
             )
-        if let configuration = AppMetricaConfiguration(apiKey: "33181269-9be0-4315-8923-1a4ffc4feb89") {
+        if let configuration = AppMetricaConfiguration(apiKey: ApiForMertica.apiKey) {
             AppMetrica.activate(with: configuration)
         }
         
