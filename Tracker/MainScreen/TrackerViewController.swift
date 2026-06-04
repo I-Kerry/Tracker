@@ -432,7 +432,7 @@ extension TrackerViewController: UICollectionViewDelegate {
         }
         
         let tracker = visibleCategories[indexPath.section].trackerArray[indexPath.row]
-        let delete = UIAction(title: String(localized: .delete), handler: { [weak self] _ in
+        let delete = UIAction(title: String(localized: .delete), attributes: .destructive, handler: { [weak self] _ in
             guard let self else { return }
             self.showDeleteAlert(tracker)
             collectionView.reloadData()

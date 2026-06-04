@@ -110,9 +110,8 @@ final class StatisticsViewController: UIViewController {
     }
     
     private func updateData() {
-//        guard let count = try? trackerRecordStore.fetchAllRecords().count else { return }
-//        recordsCount = count
-        recordsCount = 0
+        guard let count = try? trackerRecordStore.fetchAllRecords().count else { return }
+        recordsCount = count
         updatePlaceholder()
         collectionView.reloadData()
     }
