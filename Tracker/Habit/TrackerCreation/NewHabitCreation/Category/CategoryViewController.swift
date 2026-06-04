@@ -40,7 +40,7 @@ final class CategoryViewController: UIViewController {
     }
     
     private func setupTitle() {
-        navigationItem.title = "Создание трекера"
+        navigationItem.title = String(localized: .creatingTracker)
         navigationController?.navigationBar.titleTextAttributes = [
             .font: UIFont.systemFont(ofSize: 16, weight: .medium),
             .foregroundColor: UIColor.blackDay
@@ -89,7 +89,7 @@ extension CategoryViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-        let edit = UIAction(title: "Редактировать") { [weak self] _ in
+        let edit = UIAction(title: String(localized: .edit)) { [weak self] _ in
             guard let self else { return }
             let newCategoryVC = NewCategoryViewController()
             newCategoryVC.initialTitle = self.viewModel.category(at: indexPath.row).header
@@ -99,11 +99,10 @@ extension CategoryViewController: UITableViewDelegate {
             self.navigationController?.pushViewController(newCategoryVC, animated: true)
         }
         
-        let delete = UIAction(title: "Удалить", attributes: .destructive) { [weak self] _ in
-            DispatchQueue.main.async { 
+        let delete = UIAction(title: String(localized: .delete), attributes: .destructive) { [weak self] _ in
+            DispatchQueue.main.async {
                 self?.showDeleteAlert(at: indexPath.row)
             }
-//            self.viewModel.deleteCategory(at: indexPath.row)
         }
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
             return UIMenu(title: "", children: [edit, delete])
@@ -114,16 +113,16 @@ extension CategoryViewController: UITableViewDelegate {
 extension CategoryViewController {
     private func showDeleteAlert(at index: Int) {
         let alert = UIAlertController(
-            title: "Эта категория точно не нужна?",
+            title: String(localized: .confirmDeleting),
             message: nil,
             preferredStyle: .actionSheet)
         
-        alert.addAction(UIAlertAction(title: "Удалить", style: .destructive) { [weak self] _ in
+        alert.addAction(UIAlertAction(title: String(localized: .delete), style: .destructive) { [weak self] _ in
             guard let self else { return }
             self.viewModel.deleteCategory(at: index)
         })
         
-        alert.addAction(UIAlertAction(title: "Отменить", style: .cancel))
+        alert.addAction(UIAlertAction(title: String(localized: .cancel), style: .cancel))
         
         present(alert, animated: true)
     }

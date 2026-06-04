@@ -2,13 +2,13 @@
 import UIKit
 
 enum Weekday: String, CaseIterable {
-    case monday = "Понедельник"
-    case tuesday = "Вторник"
-    case wednesday = "Среда"
-    case thursday = "Четверг"
-    case friday = "Пятница"
-    case saturday = "Суббота"
-    case sunday = "Воскресенье"
+    case monday
+    case tuesday
+    case wednesday
+    case thursday
+    case friday
+    case saturday
+    case sunday
     
     var numberValue: Int {
         switch self {
@@ -33,6 +33,14 @@ enum Weekday: String, CaseIterable {
         case .sunday: return "Вс"
         }
     }
+    
+    var localized: String {
+        String(localized: String.LocalizationValue(rawValue))
+    }
+    
+    var shortLocalized: String {
+        String(localized: String.LocalizationValue(rawValue + "_short"))
+    }
 }
 
 protocol ScheduleViewControllerDelegate: AnyObject {
@@ -43,12 +51,12 @@ final class ScheduleViewController: UIViewController {
     private var selectedDays: [Weekday] = []
     
     weak var delegate: ScheduleViewControllerDelegate?
-    
+        
     private let button: UIButton = {
         let button = UIButton()
         button.backgroundColor = .blackDay
-        button.setTitle("Готово", for: .normal)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitle(String(localized: .done), for: .normal)
+        button.setTitleColor(.blackNight, for: .normal)
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 16
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -62,7 +70,6 @@ final class ScheduleViewController: UIViewController {
         tableView.layer.masksToBounds = true
         tableView.layer.cornerRadius = 10
         tableView.rowHeight = 75
-//        tableView.contentInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
         tableView.layer.masksToBounds = true
         tableView.layer.cornerRadius = 16
         tableView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
@@ -101,7 +108,7 @@ final class ScheduleViewController: UIViewController {
     private func setupUI() {
         view.addSubview(tableView)
         view.addSubview(button)
-        view.backgroundColor = .white
+        view.backgroundColor = Colors.viewBackgroundColor
         tableView.backgroundColor = .white
     }
     
@@ -121,7 +128,7 @@ final class ScheduleViewController: UIViewController {
     }
     
     private func setupTitle() {
-        navigationItem.title = "Расписание"
+        navigationItem.title = String(localized: .schedule)
         navigationController?.navigationBar.titleTextAttributes = [
             .font: UIFont.systemFont(ofSize: 16, weight: .medium),
             .foregroundColor: UIColor.blackDay
@@ -131,7 +138,6 @@ final class ScheduleViewController: UIViewController {
     @objc private func didTapDone() {
         delegate?.didSelectDays(selectedDays)
         navigationController?.popViewController(animated: true)
-//        dismiss(animated: true)
     }
 }
 
@@ -146,7 +152,7 @@ extension ScheduleViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: ScheduleTableViewCell.reuseIdentifier, for: indexPath)
-        cell.textLabel?.text = Weekday.allCases[indexPath.row].rawValue
+        cell.textLabel?.text = Weekday.allCases[indexPath.row].localized
         cell.textLabel?.font = UIFont.systemFont(ofSize: 17, weight: .medium)
         cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
         cell.textLabel?.textColor = .blackDay

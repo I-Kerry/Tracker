@@ -1,6 +1,7 @@
 
 import UIKit
 import CoreData
+import AppMetricaCore
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -23,6 +24,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 NSSecureUnarchiveFromDataTransformer(),
                 forName: NSValueTransformerName("NSSecureUnarchiveFromDataTransformerName")
             )
+        if let configuration = AppMetricaConfiguration(apiKey: ApiForMertica.apiKey) {
+            AppMetrica.activate(with: configuration)
+        }
         
         return true
     }

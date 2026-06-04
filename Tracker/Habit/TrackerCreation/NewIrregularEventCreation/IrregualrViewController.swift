@@ -8,7 +8,7 @@ protocol IrregularViewControllerDelegate: AnyObject {
 final class IrregularViewController: UIViewController {
     
     private var items: [String] = [
-        "Категория"
+        String(localized: .category)
     ]
     
     weak var delegate: IrregularViewControllerDelegate?
@@ -27,7 +27,7 @@ final class IrregularViewController: UIViewController {
     private var searchBar: UITextField = {
         let searchBar = UITextField()
         searchBar.borderStyle = .roundedRect
-        searchBar.placeholder = "Введите название трекера"
+        searchBar.placeholder = String(localized: .enterTrackerName)
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         searchBar.clearButtonMode = .whileEditing
         searchBar.backgroundColor = .backgroundDay
@@ -36,7 +36,7 @@ final class IrregularViewController: UIViewController {
     
     private let limitLabel: UILabel = {
         let limitLabel = UILabel()
-        limitLabel.text = "Ограничение 38 символов"
+        limitLabel.text = String(localized: .charLimit)
         limitLabel.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         limitLabel.textColor = .red
         limitLabel.isHidden = true
@@ -58,7 +58,7 @@ final class IrregularViewController: UIViewController {
     private let cancelButton: UIButton = {
         let cancelButton = UIButton()
         cancelButton.backgroundColor = .white
-        cancelButton.setTitle("Отменить", for: .normal)
+        cancelButton.setTitle(String(localized: .cancel), for: .normal)
         cancelButton.setTitleColor(.red, for: .normal)
         cancelButton.layer.masksToBounds = true
         cancelButton.layer.cornerRadius = 16
@@ -71,7 +71,7 @@ final class IrregularViewController: UIViewController {
     private let createButton: UIButton = {
         let createButton = UIButton()
         createButton.backgroundColor = .ypGray
-        createButton.setTitle("Создать", for: .normal)
+        createButton.setTitle(String(localized: .create), for: .normal)
         createButton.setTitleColor(.white, for: .normal)
         createButton.layer.masksToBounds = true
         createButton.layer.cornerRadius = 16
@@ -135,14 +135,14 @@ final class IrregularViewController: UIViewController {
         contentView.addSubview(emojiCollection)
         contentView.addSubview(colorCollection)
         
-        view.backgroundColor = .white
-        scrollView.backgroundColor = .white
-        contentView.backgroundColor = .white
-        tableView.backgroundColor = .white
+        view.backgroundColor = Colors.viewBackgroundColor
+        scrollView.backgroundColor = .blackNight
+        contentView.backgroundColor = .blackNight
+        tableView.backgroundColor = .blackNight
     }
     
     private func setupTitle() {
-        navigationItem.title = "Новое нерегулярное событие"
+        navigationItem.title = String(localized: .irregularEvent)
         navigationController?.navigationBar.titleTextAttributes = [
             .font: UIFont.systemFont(ofSize: 16, weight: .medium),
             .foregroundColor: UIColor.blackDay

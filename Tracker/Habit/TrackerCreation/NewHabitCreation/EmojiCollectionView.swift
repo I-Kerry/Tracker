@@ -6,10 +6,7 @@ protocol EmojiCollectionViewDelegate: AnyObject {
 }
 
 final class EmojiCollectionView: UIView {
-    
-    private let emojiArray = [ "🙂", "😻", "🌺", "🐶", "❤️", "😱", "😇", "😡", "🥶", "🤔", "🙌", "🍔", "🥦", "🏓", "🥇", "🎸", "🏝", "😪"
-        
-    ]
+    private let emojiArray = EmojiArray.emojiArray
     
     weak var delegate: EmojiCollectionViewDelegate?
     
@@ -24,8 +21,8 @@ final class EmojiCollectionView: UIView {
         
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         self.addSubview(collectionView)
-        collectionView.backgroundColor = .white
-        self.backgroundColor = .white
+        collectionView.backgroundColor = Colors.viewBackgroundColor
+        self.backgroundColor = Colors.viewBackgroundColor
         
         collectionView.dataSource = self
         collectionView.delegate = self
@@ -61,7 +58,6 @@ extension EmojiCollectionView: UICollectionViewDataSource {
 
 extension EmojiCollectionView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        return CGSize(width: (collectionView.bounds.width - 5 * 5) / 6, height: 52)
         return CGSize(width: (UIScreen.main.bounds.width - 32 - 5 * 5) / 6, height: 52)
     }
     

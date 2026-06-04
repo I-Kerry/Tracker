@@ -45,9 +45,7 @@ final class TrackerCategoryStore: NSObject {
         trackerCategoryCD.header = trackerCategory.header
         
         let trackerCD = TrackerCoreData(context: context)
-        
-//        trackerCategoryCD.trackers =
-        
+                
         try? context.save()
     }
     

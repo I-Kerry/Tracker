@@ -1,14 +1,13 @@
 
 import UIKit
 
-final class NewCategoryView: UIView {
+final class NewCategoryView: UIView {    
     var textField: UITextField = {
         let textField = UITextField()
         textField.borderStyle = .roundedRect
         textField.placeholder = "Введите название категории"
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.clearButtonMode = .whileEditing
-        textField.backgroundColor = .backgroundDay
         return textField
     }()
     
@@ -30,6 +29,7 @@ final class NewCategoryView: UIView {
         
         setupUI()
         setupConstraints()
+        textField.backgroundColor = Colors.viewBackgroundColor
     }
     
     @available(*, unavailable)

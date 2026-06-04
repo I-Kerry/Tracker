@@ -6,21 +6,12 @@ final class CreateTrackerViewController: UIViewController {
     weak var delegateHabit: HabitViewDelegate?
     
     weak var delegateIrregular: IrregularViewControllerDelegate?
-    
-//    private var titleLabel: UILabel = {
-//        let titleLabel = UILabel()
-//        titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-//        titleLabel.textColor = .blackDay
-//        titleLabel.text = "Создание трекера"
-//        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-//        return titleLabel
-//    }()
-    
+        
     private let habitButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = .blackDay
-        button.setTitle("Привычка", for: .normal)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitle(String(localized: .habit), for: .normal)
+        button.setTitleColor(.blackNight, for: .normal)
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 16
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -31,8 +22,8 @@ final class CreateTrackerViewController: UIViewController {
     private let irregularButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = .blackDay
-        button.setTitle("Нерегулярное событие", for: .normal)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitle(String(localized: .irregularEvent), for: .normal)
+        button.setTitleColor(.blackNight, for: .normal)
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 16
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -53,23 +44,19 @@ final class CreateTrackerViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = Colors.viewBackgroundColor
         setupUI()
         setupConstraints()
         setupTitle()
     }
     
     private func setupUI() {
-//        view.addSubview(titleLabel)
         view.addSubview(habitButton)
         view.addSubview(irregularButton)
-        view.backgroundColor = .white
     }
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-//            titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 27),
-//            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            
             habitButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             habitButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             habitButton.leadingAnchor.constraint(equalTo: view.leadingAnchor,constant: 20),
@@ -98,7 +85,7 @@ final class CreateTrackerViewController: UIViewController {
     }
     
     private func setupTitle() {
-        navigationItem.title = "Создание трекера"
+        navigationItem.title = String(localized: .creatingTracker)
         navigationController?.navigationBar.titleTextAttributes = [
             .font: UIFont.systemFont(ofSize: 16, weight: .medium),
             .foregroundColor: UIColor.blackDay

@@ -48,7 +48,7 @@ final class TrackerRecordStore: NSObject {
         trackerRecordCD.id = trackerRecord.id
         
         let request = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
-        request.predicate = NSPredicate(format: "id == %@", trackerRecord.trackerId.uuidString)
+        request.predicate = NSPredicate(format: "id == %@", trackerRecord.trackerId as CVarArg)
         let fetch = try context.fetch(request)
         let trackerCD = fetch.first
         trackerRecordCD.trackerId = trackerCD
@@ -58,10 +58,19 @@ final class TrackerRecordStore: NSObject {
     
     func removeTrackerRecord(trackerID id: UUID, trackerDate date: Date) throws {
         let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
-        request.predicate = NSPredicate(format: "trackerId == %@ AND date == %@" , id.uuidString as CVarArg, date as CVarArg)
+        request.predicate = NSPredicate(format: "trackerId.id == %@ AND date == %@" , id as CVarArg, date as CVarArg)
         if let record = try? context.fetch(request).first {
             context.delete(record)
             try context.save()
+        }
+    }
+    
+    func fetchAllRecords() throws -> [TrackerRecord] {
+        let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
+        let fetch = try context.fetch(request)
+        return fetch.map { result in
+//            guard let id = result.id, let date = result.date, let trackerId = result.trackerId else { return nil }
+            return TrackerRecord(id: result.id ?? UUID(), trackerId: result.trackerId?.id ?? UUID(), date: result.date ?? Date())
         }
     }
 }

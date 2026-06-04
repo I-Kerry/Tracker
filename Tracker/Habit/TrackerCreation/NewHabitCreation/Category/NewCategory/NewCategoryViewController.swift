@@ -37,7 +37,7 @@ final class NewCategoryViewController: UIViewController {
     }
     
     private func setupTitle() {
-        navigationItem.title = "Новая категория"
+        navigationItem.title = String(localized: .newCategory)
         navigationController?.navigationBar.titleTextAttributes = [
             .font: UIFont.systemFont(ofSize: 16, weight: .medium),
             .foregroundColor: UIColor.blackDay

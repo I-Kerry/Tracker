@@ -13,13 +13,15 @@ final class HabitView: UIViewController {
     private let colorCollection = ColorCollectionView()
     private let categoryVC = CategoryViewController()
     private let scheduleVC = ScheduleViewController()
+    private let trackerStore = TrackerStore()
     private var selectedDays: [Weekday] = []
     private var selectedEmoji: String?
     private var selectedCategory: String?
+    var editingTracker: Tracker?
     private var tableViewTopConstraint: NSLayoutConstraint?
     private var items: [String] = [
-        "Категория",
-        "Расписание"
+        String(localized: .category),
+        String(localized: .schedule)
     ]
     
     // MARK: - UI
@@ -31,7 +33,7 @@ final class HabitView: UIViewController {
     private var searchBar: UITextField = {
         let searchBar = UITextField()
         searchBar.borderStyle = .roundedRect
-        searchBar.placeholder = "Введите название трекера"
+        searchBar.placeholder = String(localized: .enterTrackerName)
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         searchBar.clearButtonMode = .whileEditing
         searchBar.backgroundColor = .backgroundDay
@@ -40,7 +42,7 @@ final class HabitView: UIViewController {
     
     private let limitLabel: UILabel = {
         let limitLabel = UILabel()
-        limitLabel.text = "Ограничение 38 символов"
+        limitLabel.text = String(localized: .charLimit)
         limitLabel.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         limitLabel.textColor = .red
         limitLabel.isHidden = true
@@ -62,8 +64,8 @@ final class HabitView: UIViewController {
     
     private let cancelButton: UIButton = {
         let cancelButton = UIButton()
-        cancelButton.backgroundColor = .white
-        cancelButton.setTitle("Отменить", for: .normal)
+        cancelButton.backgroundColor = .blackNight
+        cancelButton.setTitle(String(localized: .cancel), for: .normal)
         cancelButton.setTitleColor(.red, for: .normal)
         cancelButton.layer.masksToBounds = true
         cancelButton.layer.cornerRadius = 16
@@ -76,7 +78,7 @@ final class HabitView: UIViewController {
     private let createButton: UIButton = {
         let createButton = UIButton()
         createButton.backgroundColor = .ypGray
-        createButton.setTitle("Создать", for: .normal)
+        createButton.setTitle(String(localized: .create), for: .normal)
         createButton.setTitleColor(.white, for: .normal)
         createButton.layer.masksToBounds = true
         createButton.layer.cornerRadius = 16
@@ -95,7 +97,8 @@ final class HabitView: UIViewController {
     
     // MARK: - Init
 
-    init() {
+    init(tracker: Tracker? = nil) {
+        self.editingTracker = tracker
         super.init(nibName: nil, bundle: nil)
         cancelButton.addTarget(self, action: #selector(tapCancelButton), for: .touchUpInside)
         createButton.addTarget(self, action: #selector(tapCreateButton), for: .touchUpInside)
@@ -147,14 +150,18 @@ final class HabitView: UIViewController {
         contentView.addSubview(emojiCollection)
         contentView.addSubview(colorCollection)
         
-        view.backgroundColor = .white
-        scrollView.backgroundColor = .white
-        contentView.backgroundColor = .white
+        view.backgroundColor = Colors.viewBackgroundColor
+        scrollView.backgroundColor = Colors.viewBackgroundColor
+        contentView.backgroundColor = Colors.viewBackgroundColor
         tableView.backgroundColor = .white
     }
     
     private func setupTitle() {
-        navigationItem.title = "Новая привычка"
+        navigationItem.title = String(localized: .newHabit)
+        if editingTracker != nil {
+            navigationItem.title = String(localized: .editHabit)
+            createButton.setTitle(String(localized: .save), for: .normal)
+        }
         navigationController?.navigationBar.titleTextAttributes = [
             .font: UIFont.systemFont(ofSize: 16, weight: .medium),
             .foregroundColor: UIColor.blackDay
@@ -219,19 +226,24 @@ final class HabitView: UIViewController {
     @objc func tapCreateButton() {
         guard let trackerName = searchBar.text,
               !trackerName.isEmpty else { return }
-        let tracker = Tracker(id: UUID(),
+        let tracker = Tracker(id: editingTracker?.id ?? UUID(),
                               name: trackerName,
-//                              color: UIColor(red: 0.5, green: 0.5, blue: 1, alpha: 1),
                               color: selectedColor ?? UIColor(red: 0.5, green: 0.5, blue: 1, alpha: 1),
                               emoji: selectedEmoji ?? "",
                               schedule: selectedDays)
-        delegate?.didCreateTracker(tracker, category: selectedCategory ?? "")
-        view.window?.rootViewController?.dismiss(animated: true)
+        if editingTracker != nil {
+            try? trackerStore.updateTracker(tracker)
+            navigationController?.popViewController(animated: true)
+        } else {
+            delegate?.didCreateTracker(tracker, category: selectedCategory ?? "")
+            view.window?.rootViewController?.dismiss(animated: true)
+        }
     }
     
     @objc func textChanged() {
         createButton.isEnabled = !(searchBar.text?.isEmpty ?? true)
         createButton.backgroundColor = createButton.isEnabled ? .blackDay : .ypGray
+        createButton.titleLabel?.textColor = createButton.isHidden ? .white : .blackNight
     }
     
     @objc func dismissKeyboard() {
@@ -252,11 +264,11 @@ final class HabitView: UIViewController {
         }
         
         if days.count == 7 {
-            return "Каждый день"
+            return String(localized: .everyDay)
         }
         
         let sortedDays = days.sorted { $0.numberValue < $1.numberValue }
-        let shortNames = sortedDays.map { $0.shortNames }
+        let shortNames = sortedDays.map { $0.shortLocalized }
         
         return shortNames.joined(separator: ", ")
     }
